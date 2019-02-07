@@ -65,11 +65,11 @@ public class MenuLateral extends Entity {
 			guardarMapa.tick();
 			menuEditor.tick();
 
-			if (Input.get(GLFW.GLFW_KEY_W) && count == 0) {
+			if (Input.get(GLFW.GLFW_KEY_UP) && count == 0) {
 				index--;
 				count = 20;
 			}
-			if (Input.get(GLFW.GLFW_KEY_S) && count == 0) {
+			if (Input.get(GLFW.GLFW_KEY_DOWN) && count == 0) {
 				index++;
 				count = 20;
 

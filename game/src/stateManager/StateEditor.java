@@ -72,7 +72,7 @@ public class StateEditor extends State {
 		}
 		menuLateral.render(camera);
 		MasterRenderer.processEntity3D(ref);
-		MasterRenderer.processEntity3D(entities);
+		MasterRenderer.processEntities3D(entities);
 	}
 
 	public void reset() {

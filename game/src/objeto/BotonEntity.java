@@ -28,11 +28,15 @@ public class BotonEntity extends PlaneEntity {
 		if (!press && Input.get(boton) && count == 0) {
 			press = true;
 			count = 20;
-		}
-		if (!press && Input.get(GLFW.GLFW_KEY_ENTER) && select && count == 0) {
+		} else if (!press && Input.get(GLFW.GLFW_KEY_ENTER) && select && count == 0) {
 			press = true;
 			count = 20;
-		}
+		} // else if (!press && ColisionUtils.inside(this.position.x, this.position.y,
+			// InputCursor.coord().x, yp, x2, y2)
+			// && select && count == 0) {
+			// press = true;
+			// count = 20;
+			// }
 
 	}
 

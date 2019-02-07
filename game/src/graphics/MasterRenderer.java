@@ -153,7 +153,7 @@ public class MasterRenderer {
 		entities3D.put(id, batch);
 	}
 
-	public static void processEntity3D(List<Entity> entities) {
+	public static void processEntities3D(List<Entity> entities) {
 		for (Entity entity : entities) {
 			processEntity3D(entity);
 		}
@@ -161,6 +161,12 @@ public class MasterRenderer {
 
 	public static void processEntityGUI(Entity entity) {
 		entitiesGUI.add(entity);
+	}
+
+	public static void processEntitiesGUI(List<Entity> entities) {
+		for (Entity entity : entities) {
+			processEntityGUI(entity);
+		}
 	}
 
 	public static TexturedModel getTexturedModel(int id) {
