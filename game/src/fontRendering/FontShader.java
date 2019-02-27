@@ -1,7 +1,8 @@
 package fontRendering;
 
-import math.Vector2f;
-import math.Vector3f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+
 import shader.Shader;
 
 public class FontShader extends Shader {

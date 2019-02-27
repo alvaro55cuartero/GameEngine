@@ -32,6 +32,7 @@ public class TextMaster {
 			textBatch = new ArrayList<GUIText>();
 			texts.put(font, textBatch);
 		}
+		textBatch.add(text);
 	}
 
 	public static void removeText(GUIText text) {

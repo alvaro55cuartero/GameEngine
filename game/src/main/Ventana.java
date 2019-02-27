@@ -9,11 +9,16 @@ import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 
 import org.lwjgl.glfw.GLFWVidMode;
+
+import controls.Input;
+import controls.InputClick;
+import controls.InputCursor;
 
 public class Ventana {
 
@@ -37,6 +42,7 @@ public class Ventana {
 		glfwShowWindow(window);
 		glfwSetKeyCallback(window, new Input());
 		glfwSetCursorPosCallback(window, new InputCursor());
+		glfwSetMouseButtonCallback(window, new InputClick());
 		glfwMakeContextCurrent(window);
 
 	}

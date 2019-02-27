@@ -1,7 +1,7 @@
 package textures;
 
 public class ModelTexture {
-	int textureID;
+	private int textureID;
 
 	public int getTextureID() {
 		return textureID;

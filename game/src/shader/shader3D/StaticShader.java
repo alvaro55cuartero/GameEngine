@@ -1,14 +1,15 @@
-package shader;
+package shader.shader3D;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import main.Camera;
+import shader.Shader;
 
 public class StaticShader extends Shader {
 
-	private static final String VERTEX_FILE = "src/shader/vertexShader";
-	private static final String FRAGMENT_FILE = "src/shader/fragmentShader";
+	private static final String VERTEX_FILE = "src/shader/shader3D/vertexShader";
+	private static final String FRAGMENT_FILE = "src/shader/shader3D/fragmentShader";
 
 	private int locationTransformationMatrix;
 	private int locationProjectionMatrix;

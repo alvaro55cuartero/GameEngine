@@ -40,20 +40,34 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBVorbisInfo;
 
 public class Test {
 
-	public static void main(String args[]) throws IOException {
+	public static void main(String args[]) throws IOException, InterruptedException {
 		AudioManager.init();
-		AudioManager.setListenerData();
+		AudioManager.setListenerData(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
 
-		int buffer = AudioManager.LoadSound("res/audio/test.ogg");
+		float x = 1000f;
+
+		int buffer = AudioManager.LoadSound("res/audio/404.ogg");
 		Source source = new Source();
-
+		source.setLooping(true);
 		source.play(buffer);
+		source.setPosition(x, 0, 0);
 
+		while (source.isPlaying()) {
+			System.out.println(x);
+			x -= 1f;
+			source.setPosition(x, 0, 0);
+
+			Thread.sleep(10);
+			if (x < -1000) {
+				break;
+			}
+		}
 		source.delete();
 		AudioManager.cleanUp();
 

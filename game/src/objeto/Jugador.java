@@ -4,10 +4,10 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import controls.Input;
 import graphics.MasterRenderer;
 import level.Level;
 import main.Camera;
-import main.Input;
 
 public class Jugador extends PlaneEntity {
 
@@ -22,7 +22,7 @@ public class Jugador extends PlaneEntity {
 	}
 
 	public Jugador(int texturedModelId) {
-		this(texturedModelId, new Vector3f(1, 4, -5), 1, 1);
+		this(texturedModelId, new Vector3f(1, 4, -4), 3f, 3f);
 	}
 
 	public void render(Camera camera) {
@@ -30,8 +30,9 @@ public class Jugador extends PlaneEntity {
 	}
 
 	public void onGround(Level level) {
-		if (this.position.y < 0) {
+		if (this.position.y < -7.5) {
 			onGround = true;
+
 		}
 	}
 

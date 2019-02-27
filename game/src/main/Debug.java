@@ -2,6 +2,9 @@ package main;
 
 public class Debug {
 
+	public static final int DEBUG_CURSOR_POSITION = 0x1;
+	public static final int DEBUG_KEY = 0x2;
+
 	public enum Grado {
 		notificacion, advertencia, error
 	}
@@ -20,6 +23,18 @@ public class Debug {
 	public static void prueba(String txt) {
 		if (pruebas) {
 			System.out.println(txt);
+		}
+	}
+
+	public static void enable(int code) {
+		switch (code) {
+		case 1:
+		}
+	}
+
+	public static String debugInfo(boolean console) {
+		if() {
+			
 		}
 	}
 }

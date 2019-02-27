@@ -3,8 +3,8 @@ package objeto;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import controls.Input;
 import graphics.MasterRenderer;
-import main.Input;
 
 public class BotonEntity extends PlaneEntity {
 
@@ -18,7 +18,7 @@ public class BotonEntity extends PlaneEntity {
 	public BotonEntity(int texturedModelId, Vector3f position, float sx, float sy, int boton) {
 		super(texturedModelId, position, sx, sy);
 		this.boton = boton;
-		ref = new PlaneEntity(6, new Vector3f(position.x, position.y, -1), sx, sy);
+		ref = new PlaneEntity(15, new Vector3f(position.x, position.y, -1), sx, sy);
 	}
 
 	public void tick() {

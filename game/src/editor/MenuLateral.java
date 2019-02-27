@@ -3,9 +3,10 @@ package editor;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import controls.Input;
 import graphics.MasterRenderer;
 import main.Camera;
-import main.Input;
+import main.Const;
 import objeto.BotonEntity;
 import objeto.Entity;
 import stateManager.StateEditor;
@@ -38,19 +39,20 @@ public class MenuLateral extends Entity {
 	public boolean visible = false;
 
 	public MenuLateral(String ruta) {
-		super(0, new Vector3f(-4, -2, -1), 0, 0, 0, 2, 4, 1);
+		super(9, new Vector3f(-4, -2, -1), 0, 0, 0, 240, Const.height + 10, 1);
 
 		// menu principal
-		crearMapa = new BotonEntity(1, new Vector3f(-3.8f, 1.5f, -1f), 1.6f, 0.4f, GLFW.GLFW_KEY_C);
-		abrirMapa = new BotonEntity(2, new Vector3f(-3.8f, 1f, -1f), 1.6f, 0.4f, GLFW.GLFW_KEY_O);
-		guardarMapa = new BotonEntity(3, new Vector3f(-3.8f, 0.5f, -1f), 1.6f, 0.4f, GLFW.GLFW_KEY_G);
-		menuEditor = new BotonEntity(4, new Vector3f(-3.8f, 0f, -1f), 1.6f, 0.4f, GLFW.GLFW_KEY_M);
-		capaAlante = new BotonEntity(0, new Vector3f(0, 0, -1f), 4, 1, GLFW.GLFW_KEY_O);
-		capaAtras = new BotonEntity(0, new Vector3f(0, 0, -1f), 1.6f, 0.4f, GLFW.GLFW_KEY_P);
+		crearMapa = new BotonEntity(10, new Vector3f(20f, 450f, 0f), 200f, 60f, GLFW.GLFW_KEY_C);
+		abrirMapa = new BotonEntity(11, new Vector3f(20f, 370f, 0f), 200f, 60f, GLFW.GLFW_KEY_O);
+		guardarMapa = new BotonEntity(12, new Vector3f(20f, 290f, 0f), 200f, 60f, GLFW.GLFW_KEY_G);
+		menuEditor = new BotonEntity(13, new Vector3f(20f, 210f, 0f), 200, 60, GLFW.GLFW_KEY_M);
+		capaAlante = new BotonEntity(0, new Vector3f(0, 0, 0f), 4, 1, GLFW.GLFW_KEY_O);
+		capaAtras = new BotonEntity(0, new Vector3f(0, 0, 0f), 1.6f, 0.4f, GLFW.GLFW_KEY_P);
 
 		// menu seleccion
-		atrasSeleccion = new BotonEntity(5, new Vector3f(-2.8f, 1.5f, -1f), 0.4f, 0.4f, GLFW.GLFW_KEY_DELETE);
-		menuList = new MenuList(rellenar("res/png/ListaEditor"), new Vector3f(-3.8f, -1.8f, -1f), 1.6f, 3f);
+		atrasSeleccion = new BotonEntity(14, new Vector3f(-2.8f, 1.5f, -1f), 0.4f, 0.4f, GLFW.GLFW_KEY_DELETE);
+		menuList = new MenuList(rellenar("res/mapa/list"), new Vector3f(30f, 350f, 0f), Const.width / 8,
+				Const.height / 4);
 	}
 
 	public void tick(StateMachine stateMachine, StateEditor stateEditor) {
@@ -65,11 +67,11 @@ public class MenuLateral extends Entity {
 			guardarMapa.tick();
 			menuEditor.tick();
 
-			if (Input.get(GLFW.GLFW_KEY_UP) && count == 0) {
+			if (Input.get(GLFW.GLFW_KEY_UP) && count == 0 && index > 0) {
 				index--;
 				count = 20;
 			}
-			if (Input.get(GLFW.GLFW_KEY_DOWN) && count == 0) {
+			if (Input.get(GLFW.GLFW_KEY_DOWN) && count == 0 && index < 3) {
 				index++;
 				count = 20;
 
@@ -79,7 +81,7 @@ public class MenuLateral extends Entity {
 			}
 
 			if (abrirMapa.press == true) {
-				stateEditor.cargarMapa("res/mapa/mapax.png");
+				stateEditor.cargarMapa("res/mapa/mapa");
 			}
 
 			if (guardarMapa.press == true) {
@@ -163,7 +165,8 @@ public class MenuLateral extends Entity {
 		BotonEntity[] entities = new BotonEntity[frases.length];
 
 		for (int i = 0; i < frases.length; i++) {
-			entities[i] = new BotonEntity(MasterRenderer.findId(frases[i]), new Vector3f(-3.5f, 0, -1), 1, 1, -1);
+			entities[i] = new BotonEntity(MasterRenderer.findId(frases[i]), new Vector3f(40f, 350, 0), Const.width / 8,
+					Const.height / 4, -1);
 		}
 
 		return entities;

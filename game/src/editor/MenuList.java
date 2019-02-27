@@ -3,8 +3,8 @@ package editor;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import controls.Input;
 import graphics.MasterRenderer;
-import main.Input;
 import objeto.BotonEntity;
 import objeto.PlaneEntity;
 
@@ -15,7 +15,7 @@ public class MenuList extends PlaneEntity {
 	int count = 0;
 
 	public MenuList(BotonEntity entities[], Vector3f position, float sx, float sy) {
-		super(7, position, sx, sy);
+		super(16, position, sx, sy);
 		this.entities = entities;
 	}
 

@@ -1,6 +1,7 @@
 package level;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import main.Const;
 import objeto.Entity;
 import objeto.PlaneEntity;
 import tools.FileUtils;
+import tools.Lector;
 
 public class Level {
 
@@ -23,8 +25,37 @@ public class Level {
 
 	public Level(MasterColisions masterColision, String ruta) {
 		this.chunkCoord = new Vector2i();
-		rellenarEntities(ruta);
+		// rellenarEntities(ruta);
+		leerMapa("res/mapa/mapa");
 
+	}
+
+	private void leerMapa(String ruta) {
+		try {
+			String txt = Lector.leerArchivoTexto(ruta).replaceAll("\n", "");
+			String[] batches = txt.split("#");
+			for (int i = 0; i < batches.length; i++) {
+				if (!batches[i].matches("")) {
+					int id = 0;
+					int anchoEntity = 1;
+					int altoEntity = 1;
+					String[] ele = batches[i].split(";");
+					for (int j = 0; j < ele.length; j++) {
+						String[] arg = ele[j].split(":");
+						if (j == 0) {
+							id = MasterRenderer.findId(arg[0]);
+							anchoEntity = Integer.parseInt(arg[1]);
+							altoEntity = Integer.parseInt(arg[2]);
+						} else {
+							entities.add(new PlaneEntity(id, new Vector3f(Integer.parseInt(arg[0]),
+									Integer.parseInt(arg[1]), Integer.parseInt(arg[2])), anchoEntity, altoEntity));
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void rellenarEntities(String ruta) {
@@ -68,7 +99,7 @@ public class Level {
 	}
 
 	public void render(Camera camera) {
-		MasterRenderer.processEntity3D(entities);
+		MasterRenderer.processEntities3D(entities);
 	}
 
 	public List<Entity> getEntities() {

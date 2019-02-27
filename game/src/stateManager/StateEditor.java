@@ -1,26 +1,28 @@
 package stateManager;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import javax.imageio.ImageIO;
-
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import controls.Input;
 import editor.MenuLateral;
+import fontMeshCreator.FontType;
+import fontMeshCreator.GUIText;
+import fontRendering.TextMaster;
+import graphics.Loader;
 import graphics.MasterRenderer;
 import main.Const;
-import main.Input;
 import objeto.Entity;
 import objeto.PlaneEntity;
 import stateManager.StateMachine.state;
-import tools.FileUtils;
+import tools.Batch;
+import tools.Lector;
 
 public class StateEditor extends State {
 
@@ -33,26 +35,31 @@ public class StateEditor extends State {
 	Vector2f pos;
 	int count = 0;
 
+	boolean freeMode = false;
+
 	Level level;
 	MenuLateral menuLateral;
 	Focus currentFocus = Focus.VIEWPORT;
 
 	PlaneEntity focusEntity;
-	PlaneEntity ref;
 
 	int id = 1;
 
 	int[] pixel = new int[Const.sizeInPixels];
 
-	int capa = -1;
+	int capa = 0;
+	GUIText text;
 
 	public StateEditor() {
 
 		menuLateral = new MenuLateral("res/mapa/list");
-		focusEntity = new PlaneEntity(6, new Vector3f(0, 0, -1f), 1, 1);
-		ref = new PlaneEntity(4, new Vector3f(0, 0, 0), 1, 1);
+		focusEntity = new PlaneEntity(15, new Vector3f(Const.width / 2, Const.height / 2, -1f), Const.width / 8,
+				Const.height / 4);
 
 		pos = new Vector2f();
+		FontType font = new FontType(Loader.loadTexture("res/Fonts/arial.png"), new File("res/Fonts/arial.fnt"));
+		text = new GUIText("" + capa, 1, font, new Vector2f(0, 0), 0.5f, true);
+		TextMaster.loadText(text);
 	}
 
 	public void tick(StateMachine stateMachine) {
@@ -64,6 +71,7 @@ public class StateEditor extends State {
 			stateMachine.setCurrentState(state.MENU_PAUSA);
 		}
 		focus(stateMachine);
+
 	}
 
 	public void render() {
@@ -71,8 +79,15 @@ public class StateEditor extends State {
 			MasterRenderer.processEntityGUI(focusEntity);
 		}
 		menuLateral.render(camera);
-		MasterRenderer.processEntity3D(ref);
-		MasterRenderer.processEntities3D(entities);
+		rend();
+	}
+
+	private void rend() {
+		for (int i = 0; i < entities.size(); i++) {
+			if (entities.get(i).getPosition().z <= capa) {
+				MasterRenderer.processEntity3D(entities.get(i));
+			}
+		}
 	}
 
 	public void reset() {
@@ -94,7 +109,35 @@ public class StateEditor extends State {
 				currentFocus = Focus.MENULATERAL;
 				count = 20;
 			}
-			camera.moveEditor();
+
+			if (Input.get(GLFW.GLFW_KEY_N) && count == 0) {
+				capa--;
+				count = 20;
+				text.setText("" + capa);
+			}
+
+			if (Input.get(GLFW.GLFW_KEY_M) && count == 0) {
+				capa++;
+				count = 20;
+				text.setText("" + capa);
+			}
+
+			if (Input.get(GLFW.GLFW_KEY_P) && count == 0) {
+				freeMode = true;
+				count = 20;
+			}
+			if (Input.get(GLFW.GLFW_KEY_O) && count == 0) {
+				camera.setDir(new Vector3f(0, 0, 0));
+				camera.setPosition(new Vector3f(0, 0, 10));
+				freeMode = false;
+				count = 20;
+			}
+			if (!freeMode) {
+				camera.moveEditor();
+			} else {
+				camera.moveFree();
+			}
+
 			break;
 		case MENULATERAL:
 			menuLateral.tick(stateMachine, this);
@@ -127,9 +170,58 @@ public class StateEditor extends State {
 	}
 
 	public void guardarMapa() {
-		cargarPixels();
-		FileUtils.crearImagen(pixel, Const.ANCHOIMAGENInPixel, Const.ALTOIMAGENInPixel, "res/mapa/mapax.png");
+		ArrayList<Batch> batch = new ArrayList<Batch>();
+		boolean find = false;
+		// cargarPixels();
+		// FileUtils.crearImagen(pixel, Const.ANCHOIMAGENInPixel,
+		// Const.ALTOIMAGENInPixel, "res/mapa/mapax.png");
+		int count = 0;
+		for (int i = 0; i < entities.size(); i++) {
+
+			for (Batch b : batch) {
+				if (b.id.matches(find(entities.get(i).getTexturedModelId()))) {
+					b.add(entities.get(i).getPosition().x, entities.get(i).getPosition().y,
+							entities.get(i).getPosition().z);
+					find = true;
+				}
+
+			}
+
+			if (!find) {
+				int ids = entities.get(i).getTexturedModelId();
+				batch.add(new Batch(find(ids), "" + entities.get(i).getSx(), "" + entities.get(i).getSy()));
+				batch.get(count).add(entities.get(i).getPosition().x, entities.get(i).getPosition().y,
+						entities.get(i).getPosition().z);
+				count++;
+			}
+			find = false;
+		}
+		String txt = "";
+		for (Batch b : batch) {
+			txt = txt + b.toString() + "\n\n";
+		}
+		try {
+			Lector.createFile("res/mapa/mapax", txt);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		System.out.println("LINE");
+	}
+
+	private String find(int id) {
+		String[] nombre;
+		try {
+			nombre = Lector.leerArchivoTexto("res/mapa/list").split(";");
+			for (int i = 0; i < nombre.length; i++) {
+				if (id == i) {
+					return nombre[i];
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	private void cargarPixels() {
@@ -159,18 +251,44 @@ public class StateEditor extends State {
 	}
 
 	public void cargarMapa(String ruta) {
-		int[] pixels;
 		try {
-			BufferedImage img = ImageIO.read(new File(ruta));
-			int width = img.getWidth();
-			int height = img.getHeight();
-			pixels = new int[width * height];
-			img.getRGB(0, 0, width, height, pixels, 0, width);
-			rellenarEntities(pixels);
-
+			String txt = Lector.leerArchivoTexto(ruta).replaceAll("\n", "");
+			String[] batches = txt.split("#");
+			for (int i = 0; i < batches.length; i++) {
+				if (!batches[i].matches("")) {
+					int id = 0;
+					int anchoEntity = 1;
+					int altoEntity = 1;
+					String[] ele = batches[i].split(";");
+					for (int j = 0; j < ele.length; j++) {
+						String[] arg = ele[j].split(":");
+						if (j == 0) {
+							id = MasterRenderer.findId(arg[0]);
+							anchoEntity = (int) Float.parseFloat(arg[1]);
+							altoEntity = (int) Float.parseFloat(arg[2]);
+						} else {
+							entities.add(new PlaneEntity(id, new Vector3f(Float.parseFloat(arg[0]),
+									Float.parseFloat(arg[1]), Float.parseFloat(arg[2])), anchoEntity, altoEntity));
+						}
+					}
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		// int[] pixels;
+		// try {
+		// BufferedImage img = ImageIO.read(new File(ruta));
+		// int width = img.getWidth();
+		// int height = img.getHeight();
+		// pixels = new int[width * height];
+		// img.getRGB(0, 0, width, height, pixels, 0, width);
+		// rellenarEntities(pixels);
+
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
 
 	}
 

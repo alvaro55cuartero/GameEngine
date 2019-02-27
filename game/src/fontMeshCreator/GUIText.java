@@ -1,8 +1,9 @@
 package fontMeshCreator;
 
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+
 import fontRendering.TextMaster;
-import math.Vector2f;
-import math.Vector3f;
 
 /**
  * Represents a piece of text in the game.
@@ -61,6 +62,10 @@ public class GUIText {
 		this.lineMaxSize = maxLineLength;
 		this.centerText = centered;
 		TextMaster.loadText(this);
+	}
+
+	public void setText(String t) {
+		textString = t;
 	}
 
 	/**

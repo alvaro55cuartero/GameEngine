@@ -2,7 +2,7 @@ package stateManager;
 
 import org.lwjgl.glfw.GLFW;
 
-import main.Input;
+import controls.Input;
 import stateManager.StateMachine.state;
 
 public class StateMenuPausa extends State {

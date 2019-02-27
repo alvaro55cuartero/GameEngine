@@ -10,11 +10,11 @@ import org.lwjgl.opengl.GL11;
 
 import main.Camera;
 import main.Const;
-import models.CuboTexturedModel;
 import models.PlaneTexturedModel;
 import models.TexturedModel;
 import objeto.Entity;
-import shader.StaticShader;
+import shader.shader3D.StaticShader;
+import shader.shaderGUI.ShaderGUI;
 import tools.FileUtils;
 
 public class MasterRenderer {
@@ -25,8 +25,8 @@ public class MasterRenderer {
 
 	private static Matrix4f projectionMatrix;
 
-	private static StaticShader shader;
-	private static Renderer renderer;
+	private static StaticShader shader3D;
+	private static ShaderGUI shaderGUI;
 
 	public static final int TYPE_ORTHO = 0;
 	public static final int TYPE_PERSPECTIVE = 1;
@@ -41,21 +41,12 @@ public class MasterRenderer {
 	private static Map<Integer, List<Entity>> entities3D = new HashMap<Integer, List<Entity>>();
 
 	public static void init() {
-		if (init == false) {
 
-			GL11.glEnable(GL11.GL_CULL_FACE);
-			GL11.glCullFace(GL11.GL_BACK);
-			MasterRenderer.shader = new StaticShader();
-			projectionMatrix = new Matrix4f();
-			texturedModels.add(new CuboTexturedModel("pointDebug"));
-			changeView(TYPE_ORTHO);
-
-			if (Const.debug) {
-				init = true;
-			}
-		} else {
-			System.out.println("error se inicio dos veces el master renderer");
-		}
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glCullFace(GL11.GL_BACK);
+		shader3D = new StaticShader();
+		shaderGUI = new ShaderGUI();
+		projectionMatrix = new Matrix4f().identity();
 	}
 
 	public static void tick() {
@@ -65,74 +56,42 @@ public class MasterRenderer {
 	public static void render(Camera camera) {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		GL11.glClearColor(0.46f, 0.77f, 0.98f, 1);
-		shader.start();
 		render3D(camera);
-		renderGUI(camera);
-		shader.stop();
+		renderGUI();
 		resetEntities();
 	}
 
 	private static void render3D(Camera camera) {
+		shader3D.start();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		shader.loadViewMatrix(camera);
-		renderer.render(entities3D);
+		shader3D.loadProjectionMatrix(projectionMatrix);
+		shader3D.loadViewMatrix(camera);
+		Renderer.render(entities3D, shader3D);
+		shader3D.stop();
 	}
 
-	private static void renderGUI(Camera camera) {
+	private static void renderGUI() {
+		shaderGUI.start();
+		shaderGUI.loadTextBoolean(false);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		projectionMatrix.identity();
-		shader.loadViewMatrix(new Matrix4f().identity());
-		renderer.render(entitiesGUI);
+		Renderer.render(entitiesGUI, shaderGUI);
+		shaderGUI.stop();
+	}
+
+	private static void renderTextGUI() {
+
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	public static void changeView(int type) {
 		if (type == TYPE_ORTHO) {
-			projectionMatrix.setOrtho(-Const.width / 200, Const.width / 200, -Const.height / 200, Const.height / 200,
-					NEAR_PLANE, FAR_PLANE);
-
-			// createOrthoProjectionMatrix();
+			projectionMatrix = projectionMatrixOrtho();
 		} else if (type == TYPE_PERSPECTIVE) {
-
-			projectionMatrix.perspective(FOV, Const.aspectRatio, NEAR_PLANE, FAR_PLANE);
-			// createProjectionMatrix();
+			projectionMatrix = projectionMatrixPerspective();
 		}
-		renderer = new Renderer(shader, projectionMatrix);
 
 	}
-
-	// private static void createProjectionMatrix() {
-	// float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) *
-	// Const.aspectRatio);
-	// float x_scale = y_scale / Const.aspectRatio;
-	// float frustum_length = FAR_PLANE - NEAR_PLANE;
-	//
-	// projectionMatrix = new Matrix4f();
-	// projectionMatrix.m00 = x_scale;
-	// projectionMatrix.m11 = y_scale;
-	// projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustum_length);
-	// projectionMatrix.m23 = -1;
-	// projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustum_length);
-	// projectionMatrix.m33 = 0;
-	// }
-	//
-	// private static void createOrthoProjectionMatrix() {
-	// float r = Const.width / 200;
-	// float l = -Const.width / 200;
-	// float t = Const.height / 200;
-	// float b = -Const.height / 200;
-	// float f = FAR_PLANE;
-	// float n = NEAR_PLANE;
-	//
-	// projectionMatrix = new Matrix4f();
-	// projectionMatrix.m00 = 2 / (r - l);
-	// projectionMatrix.m11 = 2 / (t - b);
-	// projectionMatrix.m22 = -2 / (f - n);
-	// projectionMatrix.m33 = 1;
-	// projectionMatrix.m30 = -(r + +l) / (r - l);
-	// projectionMatrix.m31 = -(t + b) / (t - b);
-	// projectionMatrix.m32 = -(f + n) / (f - n);
-	//
-	// }
 
 	public static void processTexturedModels(String ruta) {
 		String txt = FileUtils.readTxt(ruta);
@@ -143,14 +102,20 @@ public class MasterRenderer {
 		}
 	}
 
+	public static void processTexturedModel(TexturedModel texturedModel) {
+		texturedModels.add(texturedModel);
+	}
+
 	public static void processEntity3D(Entity entity) {
-		Integer id = entity.getTexturedModelId();
-		List<Entity> batch = entities3D.get(id);
-		if (batch == null) {
-			batch = new ArrayList<Entity>();
+		if (entity != null) {
+			Integer id = entity.getTexturedModelId();
+			List<Entity> batch = entities3D.get(id);
+			if (batch == null) {
+				batch = new ArrayList<Entity>();
+			}
+			batch.add(entity);
+			entities3D.put(id, batch);
 		}
-		batch.add(entity);
-		entities3D.put(id, batch);
 	}
 
 	public static void processEntities3D(List<Entity> entities) {
@@ -194,7 +159,8 @@ public class MasterRenderer {
 		texturedModels.clear();
 		entitiesGUI.clear();
 		entities3D.clear();
-		shader.cleanUp();
+		shader3D.cleanUp();
+		shaderGUI.cleanUp();
 	}
 
 	public static int findId(String ruta) {
@@ -206,4 +172,18 @@ public class MasterRenderer {
 		texturedModels.add(new PlaneTexturedModel(ruta));
 		return texturedModels.size();
 	}
+
+	public static Matrix4f projectionMatrixOrtho() {
+		return new Matrix4f().setOrtho(-Const.width / 200, Const.width / 200, -Const.height / 200, Const.height / 200,
+				NEAR_PLANE, FAR_PLANE);
+	}
+
+	public static Matrix4f projectionMatrixPerspective() {
+		return new Matrix4f().perspective(FOV, Const.aspectRatio, NEAR_PLANE, FAR_PLANE);
+	}
+
+	public static Matrix4f getProjectionMatrix() {
+		return projectionMatrix;
+	}
+
 }

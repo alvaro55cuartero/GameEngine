@@ -75,7 +75,7 @@ public class StateMachine {
 		case EDITOR:
 			debug("editor");
 			MasterRenderer.resetTexturedModels();
-			MasterRenderer.processTexturedModels("res/png/ListaEditor");
+			MasterRenderer.processTexturedModels("res/mapa/list");
 			MasterRenderer.changeView(MasterRenderer.TYPE_ORTHO);
 			mainState = new StateEditor();
 			break;

@@ -7,6 +7,8 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 import org.lwjgl.opengl.GL;
 
+import controls.InputCursor;
+import fontRendering.TextMaster;
 import graphics.Loader;
 import graphics.MasterRenderer;
 import stateManager.StateMachine;
@@ -35,12 +37,7 @@ public class Main {
 		MasterRenderer.init();
 
 		stateMachine = new StateMachine();
-		// TextMaster.init();
-
-		// FontType font = new FontType(Loader.loadTexture("res/Fonts/arial.png"), new
-		// File("res/Fonts/arial.fnt"));
-		// GUIText text = new GUIText("hola", 1, font, new Vector2f(0, 0), 0.5f, true);
-		// TextMaster.loadText(text);
+		TextMaster.init();
 
 		// int[] data = new int[1200 * 1200];
 		//
@@ -70,16 +67,17 @@ public class Main {
 	private void render() {
 		stateMachine.render();
 
-		// TextMaster.render();
+		TextMaster.render();
 		glfwSwapBuffers(this.ventana.window);
 	}
 
 	public void reset() {
 		stateMachine.reset();
+		InputCursor.reset();
 	}
 
 	private void dispose() {
-		// TextMaster.cleanUp();
+		TextMaster.cleanUp();
 		stateMachine.cleanUp();
 		Loader.cleanUp();
 		MasterRenderer.cleanUp();

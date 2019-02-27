@@ -3,8 +3,9 @@ package stateManager;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
+import controls.Input;
 import graphics.MasterRenderer;
-import main.Input;
+import main.Const;
 import objeto.BotonEntity;
 import objeto.PlaneEntity;
 import stateManager.StateMachine.state;
@@ -15,11 +16,13 @@ public class StateMenuInicio extends State {
 	BotonEntity jugar;
 	BotonEntity editor;
 
+	boolean freeMode = false;
+
 	public StateMenuInicio() {
 
-		jugar = new BotonEntity(6, new Vector3f(-2f, -0f, -4f), 6f * 0.5f, 1f * 0.5f, GLFW.GLFW_KEY_J);
-		editor = new BotonEntity(6, new Vector3f(-2f, -1f, -4f), 6f * 0.5f, 1f * 0.5f, GLFW.GLFW_KEY_E);
-		background = new PlaneEntity(5, new Vector3f(-5f, -5f, -5f), 10, 10);
+		jugar = new BotonEntity(6, new Vector3f(300f, 200f, 0f), 400f, 100f, GLFW.GLFW_KEY_J);
+		editor = new BotonEntity(6, new Vector3f(300f, 350f, 0f), 400f, 100f, GLFW.GLFW_KEY_E);
+		background = new PlaneEntity(5, new Vector3f(0f, 0f, 0f), Const.width, Const.height);
 
 	}
 
@@ -33,9 +36,10 @@ public class StateMenuInicio extends State {
 			stateMachine.setCurrentState(state.EDITOR);
 		}
 
-		if (Input.get(GLFW.GLFW_KEY_P)) {
+		if (Input.get(GLFW.GLFW_KEY_T)) {
 			stateMachine.setCurrentState(state.MENU_OPCIONES);
 		}
+
 	}
 
 	public void render() {

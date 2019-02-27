@@ -37,6 +37,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
@@ -52,10 +53,6 @@ public class AudioManager {
 	static long context;
 
 	STBVorbisInfo info;
-
-	public AudioManager() {
-
-	}
 
 	public static void init() {
 
@@ -76,9 +73,9 @@ public class AudioManager {
 		AudioUtils.alError();
 	}
 
-	public static void setListenerData() {
-		AL10.alListener3f(AL10.AL_POSITION, 0, 0, 0);
-		AL10.alListener3f(AL10.AL_VELOCITY, 0, 0, 0);
+	public static void setListenerData(Vector3f pos, Vector3f vel) {
+		AL10.alListener3f(AL10.AL_POSITION, pos.x, pos.y, pos.z);
+		AL10.alListener3f(AL10.AL_VELOCITY, vel.x, vel.y, vel.z);
 	}
 
 	public static int LoadSound(String ruta) {
@@ -91,6 +88,8 @@ public class AudioManager {
 		try (STBVorbisInfo info = STBVorbisInfo.malloc()) {
 			ShortBuffer pcm = readVorbis(ruta, 32 * 1024, info);
 			alBufferData(buffer, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
 		return buffer;
@@ -106,7 +105,7 @@ public class AudioManager {
 		alcCloseDevice(device);
 	}
 
-	static ShortBuffer readVorbis(String resource, int bufferSize, STBVorbisInfo info) {
+	public static ShortBuffer readVorbis(String resource, int bufferSize, STBVorbisInfo info) {
 		ByteBuffer vorbis;
 		try {
 			vorbis = ioResourceToByteBuffer(resource, bufferSize);
