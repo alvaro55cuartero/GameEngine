@@ -2,7 +2,7 @@ package stateManager;
 
 import org.lwjgl.glfw.GLFW;
 
-import main.Input;
+import controls.Input;
 
 public class StateMenuOpciones extends State {
 

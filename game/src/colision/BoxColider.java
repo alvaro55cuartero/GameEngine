@@ -1,67 +1,31 @@
 package colision;
 
-public class BoxColider {
+import org.joml.Rectanglef;
 
-	private int x;
-	private int y;
-	private int width;
-	private int height;
-	private int tag;
+public class BoxColider extends Colider {
 
-	public BoxColider(int x, int y, int width, int height, int tag) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		this.tag = tag;
+	private Rectanglef rect;
+	private float capa;
+
+	public BoxColider(float minX, float minY, float maxX, float maxY, float capa) {
+		rect = new Rectanglef(minX, minY, maxX, maxY);
+		this.setCapa(capa);
 	}
 
-	public int getX() {
-		return x;
+	public Rectanglef getRect() {
+		return rect;
 	}
 
-	public void setX(int x) {
-		this.x = x;
+	public void setRect(Rectanglef rect) {
+		this.rect = rect;
 	}
 
-	public int getY() {
-		return y;
+	public float getCapa() {
+		return capa;
 	}
 
-	public void setY(int y) {
-		this.y = y;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public void setWidth(int width) {
-		this.width = width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
-	}
-
-	public int getMaxX() {
-		return x + width / 2;
-	}
-
-	public int getMinX() {
-		return x - width / 2;
-	}
-
-	public int getMaxY() {
-		return y + height / 2;
-	}
-
-	public int getMinY() {
-		return y - height / 2;
+	public void setCapa(float capa) {
+		this.capa = capa;
 	}
 
 }

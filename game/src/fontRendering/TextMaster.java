@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import fontMeshCreator.FontType;
-import fontMeshCreator.GUIText;
+import fontMeshCreator.EntityGUIText;
 import fontMeshCreator.TextMeshData;
 import graphics.Loader;
 
 public class TextMaster {
-	private static Map<FontType, List<GUIText>> texts = new HashMap<FontType, List<GUIText>>();
+	private static Map<FontType, List<EntityGUIText>> texts = new HashMap<FontType, List<EntityGUIText>>();
 	private static FontRenderer fontRenderer;
 
 	public static void init() {
@@ -22,21 +22,21 @@ public class TextMaster {
 		fontRenderer.render(texts);
 	}
 
-	public static void loadText(GUIText text) {
+	public static void loadText(EntityGUIText text) {
 		FontType font = text.getFont();
 		TextMeshData data = font.loadText(text);
 		int vao = Loader.loadToVao(data.getVertexPositions(), data.getTextureCoords());
 		text.setMeshInfo(vao, data.getVertexCount());
-		List<GUIText> textBatch = texts.get(font);
+		List<EntityGUIText> textBatch = texts.get(font);
 		if (textBatch == null) {
-			textBatch = new ArrayList<GUIText>();
+			textBatch = new ArrayList<EntityGUIText>();
 			texts.put(font, textBatch);
 		}
 		textBatch.add(text);
 	}
 
-	public static void removeText(GUIText text) {
-		List<GUIText> textBatch = texts.get(text.getFont());
+	public static void removeText(EntityGUIText text) {
+		List<EntityGUIText> textBatch = texts.get(text.getFont());
 		textBatch.remove(text);
 		if (textBatch.isEmpty()) {
 			texts.remove(text.getFont());

@@ -6,13 +6,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 
+import fontMeshCreator.FontType;
 import main.Camera;
 import main.Const;
 import models.PlaneTexturedModel;
+import models.RawModel;
 import models.TexturedModel;
 import objeto.Entity;
+import objeto.Entity3D;
+import shader.Shader;
 import shader.shader3D.StaticShader;
 import shader.shaderGUI.ShaderGUI;
 import tools.FileUtils;
@@ -31,13 +39,19 @@ public class MasterRenderer {
 	public static final int TYPE_ORTHO = 0;
 	public static final int TYPE_PERSPECTIVE = 1;
 
-	public static final boolean TYPE_GUI = false;
-	public static final boolean TYPE_3D_OBJECT = false;
+	public static float zoom = 1;
+
+	// public static final boolean TYPE_GUI = false;
+	// public static final boolean TYPE_3D_OBJECT = false;
 
 	private static boolean init = false;
 
 	private static List<TexturedModel> texturedModels = new ArrayList<TexturedModel>();
-	private static List<Entity> entitiesGUI = new ArrayList<Entity>();
+	// private static List<TexturedModelGUI> texturedModelsGUI = new
+	// ArrayList<TexturedModel>();
+	private static List<FontType> fonts = new ArrayList<FontType>();
+
+	private static Map<Integer, List<Entity>> entitiesGUI = new HashMap<Integer, List<Entity>>();
 	private static Map<Integer, List<Entity>> entities3D = new HashMap<Integer, List<Entity>>();
 
 	public static void init() {
@@ -50,6 +64,7 @@ public class MasterRenderer {
 	}
 
 	public static void tick() {
+		projectionMatrix = projectionMatrixOrtho();
 
 	}
 
@@ -62,19 +77,41 @@ public class MasterRenderer {
 	}
 
 	private static void render3D(Camera camera) {
-		shader3D.start();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		shader3D.start();
 		shader3D.loadProjectionMatrix(projectionMatrix);
 		shader3D.loadViewMatrix(camera);
-		Renderer.render(entities3D, shader3D);
+		render(entities3D, shader3D);
 		shader3D.stop();
 	}
 
 	private static void renderGUI() {
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		shaderGUI.start();
 		shaderGUI.loadTextBoolean(false);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		Renderer.render(entitiesGUI, shaderGUI);
+		for (Integer id : entitiesGUI.keySet()) {
+			TexturedModel model = MasterRenderer.getTexturedModel(id);
+			prepareTexturedModel(model);
+			List<Entity> batch = entitiesGUI.get(id);
+			if (batch != null) {
+				if (batch.get(0).getType().matches("GUI")) {
+					for (Entity entity : batch) {
+						prepareInstance(entity, shaderGUI);
+						GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getCount(), GL11.GL_UNSIGNED_INT, 0);
+					}
+				} else if (batch.get(0).getType().matches("TextGUI")) {
+					for (Entity entity : batch) {
+						GL11.glEnable(GL11.GL_BLEND);
+						GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+						prepareInstance(entity, shaderGUI);
+						shaderGUI.loadTextColour(new Vector3f(0, 1, 0));
+						GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getCount(), GL11.GL_UNSIGNED_INT, 0);
+						GL11.glDisable(GL11.GL_BLEND);
+					}
+				}
+			}
+			unbindTexturedModel(3);
+		}
 		shaderGUI.stop();
 	}
 
@@ -124,8 +161,28 @@ public class MasterRenderer {
 		}
 	}
 
+	public static void processEntities3D(ArrayList<Entity3D> entities) {
+		for (Entity3D entity : entities) {
+			processEntity3D((Entity3D) entity);
+		}
+	}
+
+	public static void processEntities3D(Entity[] entities) {
+		for (Entity entity : entities) {
+			processEntity3D(entity);
+		}
+	}
+
 	public static void processEntityGUI(Entity entity) {
-		entitiesGUI.add(entity);
+		if (entity != null) {
+			Integer id = entity.getTexturedModelId();
+			List<Entity> batch = entitiesGUI.get(id);
+			if (batch == null) {
+				batch = new ArrayList<Entity>();
+			}
+			batch.add(entity);
+			entitiesGUI.put(id, batch);
+		}
 	}
 
 	public static void processEntitiesGUI(List<Entity> entities) {
@@ -174,8 +231,8 @@ public class MasterRenderer {
 	}
 
 	public static Matrix4f projectionMatrixOrtho() {
-		return new Matrix4f().setOrtho(-Const.width / 200, Const.width / 200, -Const.height / 200, Const.height / 200,
-				NEAR_PLANE, FAR_PLANE);
+		return new Matrix4f().setOrtho(-Const.width * zoom / 200, Const.width * zoom / 200, -Const.height * zoom / 200,
+				Const.height * zoom / 200, NEAR_PLANE, FAR_PLANE);
 	}
 
 	public static Matrix4f projectionMatrixPerspective() {
@@ -184,6 +241,96 @@ public class MasterRenderer {
 
 	public static Matrix4f getProjectionMatrix() {
 		return projectionMatrix;
+	}
+
+	public static void render(Map<Integer, List<Entity>> entities3d, Shader shader) {
+		for (Integer id : entities3d.keySet()) {
+			TexturedModel model = MasterRenderer.getTexturedModel(id);
+			prepareTexturedModel(model);
+			List<Entity> batch = entities3d.get(id);
+			if (batch != null) {
+				for (Entity entity : batch) {
+					prepareInstance(entity, shader);
+					GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getCount(), GL11.GL_UNSIGNED_INT, 0);
+				}
+			}
+			unbindTexturedModel(3);
+		}
+	}
+
+	public static void render(List<Entity> entities, Shader shader) {
+		for (Entity entity : entities) {
+			TexturedModel model = MasterRenderer.getTexturedModel(entity.getTexturedModelId());
+			prepareTexturedModel(model);
+			prepareInstance(entity, shader);
+			GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getCount(), GL11.GL_UNSIGNED_INT, 0);
+			unbindTexturedModel(3);
+		}
+	}
+
+	public static void render(List<Entity> entities, ShaderGUI shader) {
+		for (Entity entity : entities) {
+			TexturedModel model = MasterRenderer.getTexturedModel(entity.getTexturedModelId());
+			RawModel rawModel = model.getRawModel();
+			GL30.glBindVertexArray(rawModel.getId());
+			bindVertexArrays(2);
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getModelTexture().getTextureID());
+			prepareInstance(entity, shader);
+			GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getCount(), GL11.GL_UNSIGNED_INT, 0);
+			unbindTexturedModel(2);
+		}
+	}
+
+	private static void prepareTexturedModel(TexturedModel model) {
+		RawModel rawModel = model.getRawModel();
+		GL30.glBindVertexArray(rawModel.getId());
+		GL20.glEnableVertexAttribArray(0);
+		GL20.glEnableVertexAttribArray(1);
+		GL20.glEnableVertexAttribArray(2);
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getModelTexture().getTextureID());
+	}
+
+	private static void bindVertexArrays(int num) {
+		for (int i = 0; i < num; i++) {
+			GL20.glEnableVertexAttribArray(i);
+		}
+	}
+
+	private static void unbindTexturedModel(int num) {
+		for (int i = 0; i < num; i++) {
+			GL20.glDisableVertexAttribArray(i);
+		}
+		GL30.glBindVertexArray(0);
+	}
+
+	private static void prepareInstance(Entity entity, Shader shader) {
+		if (shader instanceof StaticShader) {
+			Matrix4f transformationMatrix = new Matrix4f();
+			transformationMatrix.identity().translate(entity.getPosition())
+					.rotateX((float) Math.toRadians(entity.getRx())).rotateY((float) Math.toRadians(entity.getRy()))
+					.rotateZ((float) Math.toRadians(entity.getRz()))
+					.scale(entity.getSx(), entity.getSy(), entity.getSz());
+			((StaticShader) shader).loadTransformationMatrix(transformationMatrix);
+		} else if (shader instanceof ShaderGUI) {
+			Matrix4f transformationMatrix = new Matrix4f();
+			transformationMatrix.identity()
+					.translate(entity.getPosition().x * 2 / Const.width - 1,
+							entity.getPosition().y * 2 / Const.height - 1, entity.getPosition().z)
+					.rotateX((float) Math.toRadians(entity.getRx())).rotateY((float) Math.toRadians(entity.getRy()))
+					.rotateZ((float) Math.toRadians(entity.getRz()))
+					.scale(entity.getSx() * 2 / Const.width, entity.getSy() * 2 / Const.height, entity.getSz());
+			((ShaderGUI) shader).loadTransformationMatrix(transformationMatrix);
+		}
+	}
+
+	public static List<TexturedModel> getTexturedModels() {
+		return texturedModels;
+	}
+
+	public static void setTexturedModels(List<TexturedModel> texturedModels) {
+		MasterRenderer.texturedModels = texturedModels;
 	}
 
 }

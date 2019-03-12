@@ -5,11 +5,12 @@ import org.lwjgl.glfw.GLFW;
 
 import controls.Input;
 import controls.InputCursor;
+import graphics.MasterRenderer;
 import objeto.Jugador;
 
 public class Camera {
 
-	private Vector3f position = new Vector3f(0, 0, 8);
+	private Vector3f position = new Vector3f(0, 0, 20);
 	private float pitch;
 	private float yaw;
 	private float roll;
@@ -37,19 +38,27 @@ public class Camera {
 		}
 		if (Input.get(GLFW.GLFW_KEY_W) && count == 0) {
 			this.position.y += 1f;
-			count = 20;
+			count = 10;
 		}
-		if (Input.get(GLFW.GLFW_KEY_A) && count == 0) {
+		if (Input.get(GLFW.GLFW_KEY_A) && count == 0 && this.position.x > 0) {
 			this.position.x -= 1f;
-			count = 20;
+			count = 10;
 		}
-		if (Input.get(GLFW.GLFW_KEY_S) && count == 0) {
+		if (Input.get(GLFW.GLFW_KEY_S) && count == 0 && this.position.y > 0) {
 			this.position.y -= 1f;
-			count = 20;
+			count = 10;
 		}
 		if (Input.get(GLFW.GLFW_KEY_D) && count == 0) {
 			this.position.x += 1f;
-			count = 20;
+			count = 10;
+		}
+		if (Input.get(GLFW.GLFW_KEY_Q) && count == 0) {
+			MasterRenderer.zoom -= 0.1f;
+			count = 10;
+		}
+		if (Input.get(GLFW.GLFW_KEY_E) && count == 0) {
+			MasterRenderer.zoom += 0.1f;
+			count = 10;
 		}
 
 	}

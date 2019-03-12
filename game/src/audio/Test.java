@@ -52,7 +52,7 @@ public class Test {
 
 		float x = 1000f;
 
-		int buffer = AudioManager.LoadSound("res/audio/404.ogg");
+		int buffer = AudioManager.LoadSound("res/audio/CYCdh_TrashA01.ogg");
 		Source source = new Source();
 		source.setLooping(true);
 		source.play(buffer);

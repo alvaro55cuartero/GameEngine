@@ -15,13 +15,13 @@ public class TextMeshCreator {
 		metaData = new MetaFile(metaFile);
 	}
 
-	protected TextMeshData createTextMesh(GUIText text) {
+	protected TextMeshData createTextMesh(EntityGUIText text) {
 		List<Line> lines = createStructure(text);
 		TextMeshData data = createQuadVertices(text, lines);
 		return data;
 	}
 
-	private List<Line> createStructure(GUIText text) {
+	private List<Line> createStructure(EntityGUIText text) {
 		char[] chars = text.getTextString().toCharArray();
 		List<Line> lines = new ArrayList<Line>();
 		Line currentLine = new Line(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
@@ -45,7 +45,7 @@ public class TextMeshCreator {
 		return lines;
 	}
 
-	private void completeStructure(List<Line> lines, Line currentLine, Word currentWord, GUIText text) {
+	private void completeStructure(List<Line> lines, Line currentLine, Word currentWord, EntityGUIText text) {
 		boolean added = currentLine.attemptToAddWord(currentWord);
 		if (!added) {
 			lines.add(currentLine);
@@ -55,12 +55,14 @@ public class TextMeshCreator {
 		lines.add(currentLine);
 	}
 
-	private TextMeshData createQuadVertices(GUIText text, List<Line> lines) {
+	private TextMeshData createQuadVertices(EntityGUIText text, List<Line> lines) {
 		text.setNumberOfLines(lines.size());
 		double curserX = 0f;
 		double curserY = 0f;
+		int count = 0;
 		List<Float> vertices = new ArrayList<Float>();
 		List<Float> textureCoords = new ArrayList<Float>();
+		List<Integer> indices = new ArrayList<Integer>();
 		for (Line line : lines) {
 			if (text.isCentered()) {
 				curserX = (line.getMaxLength() - line.getLineLength()) / 2;
@@ -70,14 +72,16 @@ public class TextMeshCreator {
 					addVerticesForCharacter(curserX, curserY, letter, text.getFontSize(), vertices);
 					addTexCoords(textureCoords, letter.getxTextureCoord(), letter.getyTextureCoord(),
 							letter.getXMaxTextureCoord(), letter.getYMaxTextureCoord());
+					addIndex(indices, count);
 					curserX += letter.getxAdvance() * text.getFontSize();
+					count++;
 				}
 				curserX += metaData.getSpaceWidth() * text.getFontSize();
 			}
 			curserX = 0;
 			curserY += LINE_HEIGHT * text.getFontSize();
-		}		
-		return new TextMeshData(listToArray(vertices), listToArray(textureCoords));
+		}
+		return new TextMeshData(listToArrayInt(indices), listToArrayFloat(vertices), listToArrayFloat(textureCoords));
 	}
 
 	private void addVerticesForCharacter(double curserX, double curserY, Character character, double fontSize,
@@ -96,38 +100,53 @@ public class TextMeshCreator {
 	private static void addVertices(List<Float> vertices, double x, double y, double maxX, double maxY) {
 		vertices.add((float) x);
 		vertices.add((float) y);
+
 		vertices.add((float) x);
 		vertices.add((float) maxY);
+
 		vertices.add((float) maxX);
 		vertices.add((float) maxY);
-		vertices.add((float) maxX);
-		vertices.add((float) maxY);
+
 		vertices.add((float) maxX);
 		vertices.add((float) y);
-		vertices.add((float) x);
-		vertices.add((float) y);
+
 	}
 
 	private static void addTexCoords(List<Float> texCoords, double x, double y, double maxX, double maxY) {
 		texCoords.add((float) x);
 		texCoords.add((float) y);
+
 		texCoords.add((float) x);
 		texCoords.add((float) maxY);
+
 		texCoords.add((float) maxX);
 		texCoords.add((float) maxY);
+
 		texCoords.add((float) maxX);
-		texCoords.add((float) maxY);
-		texCoords.add((float) maxX);
-		texCoords.add((float) y);
-		texCoords.add((float) x);
 		texCoords.add((float) y);
 	}
 
-	
-	private static float[] listToArray(List<Float> listOfFloats) {
+	private static void addIndex(List<Integer> indices, int off) {
+		indices.add(0 + off * 6);
+		indices.add(1 + off * 6);
+		indices.add(2 + off * 6);
+		indices.add(2 + off * 6);
+		indices.add(3 + off * 6);
+		indices.add(0 + off * 6);
+	}
+
+	private static float[] listToArrayFloat(List<Float> listOfFloats) {
 		float[] array = new float[listOfFloats.size()];
 		for (int i = 0; i < array.length; i++) {
 			array[i] = listOfFloats.get(i);
+		}
+		return array;
+	}
+
+	private static int[] listToArrayInt(List<Integer> list) {
+		int[] array = new int[list.size()];
+		for (int i = 0; i < array.length; i++) {
+			array[i] = list.get(i);
 		}
 		return array;
 	}

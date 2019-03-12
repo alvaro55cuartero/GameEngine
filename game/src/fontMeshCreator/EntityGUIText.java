@@ -4,6 +4,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import fontRendering.TextMaster;
+import objeto.EntityGUI;
 
 /**
  * Represents a piece of text in the game.
@@ -11,7 +12,7 @@ import fontRendering.TextMaster;
  * @author Karl
  *
  */
-public class GUIText {
+public class EntityGUIText extends EntityGUI {
 
 	private String textString;
 	private float fontSize;
@@ -53,15 +54,15 @@ public class GUIText {
 	 * @param centered
 	 *            - whether the text should be centered or not.
 	 */
-	public GUIText(String text, float fontSize, FontType font, Vector2f position, float maxLineLength,
-			boolean centered) {
+	public EntityGUIText(int textureId, String text, float fontSize, FontType font, Vector2f position,
+			float maxLineLength, float height, boolean centered) {
+		super(textureId, position, maxLineLength, height);
 		this.textString = text;
 		this.fontSize = fontSize;
 		this.font = font;
 		this.position = position;
 		this.lineMaxSize = maxLineLength;
 		this.centerText = centered;
-		TextMaster.loadText(this);
 	}
 
 	public void setText(String t) {
@@ -110,14 +111,6 @@ public class GUIText {
 	 */
 	public int getNumberOfLines() {
 		return numberOfLines;
-	}
-
-	/**
-	 * @return The position of the top-left corner of the text in screen-space. (0,
-	 *         0) is the top left corner of the screen, (1, 1) is the bottom right.
-	 */
-	public Vector2f getPosition() {
-		return position;
 	}
 
 	/**

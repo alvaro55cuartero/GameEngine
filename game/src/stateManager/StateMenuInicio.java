@@ -1,28 +1,28 @@
 package stateManager;
 
-import org.joml.Vector3f;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 import controls.Input;
 import graphics.MasterRenderer;
 import main.Const;
-import objeto.BotonEntity;
-import objeto.PlaneEntity;
+import objeto.EntityGUI;
+import objeto.EntityGUIBoton;
 import stateManager.StateMachine.state;
 
 public class StateMenuInicio extends State {
 
-	PlaneEntity background;
-	BotonEntity jugar;
-	BotonEntity editor;
+	EntityGUI background;
+	EntityGUIBoton jugar;
+	EntityGUIBoton editor;
 
 	boolean freeMode = false;
 
 	public StateMenuInicio() {
 
-		jugar = new BotonEntity(6, new Vector3f(300f, 200f, 0f), 400f, 100f, GLFW.GLFW_KEY_J);
-		editor = new BotonEntity(6, new Vector3f(300f, 350f, 0f), 400f, 100f, GLFW.GLFW_KEY_E);
-		background = new PlaneEntity(5, new Vector3f(0f, 0f, 0f), Const.width, Const.height);
+		jugar = new EntityGUIBoton(6, new Vector2f(300f, 200f), 400f, 100f, GLFW.GLFW_KEY_J);
+		editor = new EntityGUIBoton(6, new Vector2f(300f, 350f), 400f, 100f, GLFW.GLFW_KEY_E);
+		background = new EntityGUI(5, new Vector2f(0f, 0f), Const.width, Const.height);
 
 	}
 

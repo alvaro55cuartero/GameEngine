@@ -8,11 +8,13 @@ public class Entity {
 	protected Vector3f position;
 	protected float rx, ry, rz;
 	protected float sx, sy, sz;
-	protected boolean solid = false;
+	protected String type;
 
-	public Entity(int texturedModelId, Vector3f position, float rx, float ry, float rz, float sx, float sy, float sz) {
+	public Entity(int texturedModelId, String type, Vector3f position, float rx, float ry, float rz, float sx, float sy,
+			float sz) {
 		super();
 		this.texturedModelId = texturedModelId;
+		this.type = type;
 		this.position = position;
 		this.rx = rx;
 		this.ry = ry;
@@ -20,6 +22,7 @@ public class Entity {
 		this.sx = sx;
 		this.sy = sy;
 		this.sz = sz;
+
 	}
 
 	public void increasePosition(float dx, float dy, float dz) {
@@ -98,8 +101,7 @@ public class Entity {
 		this.sz = sz;
 	}
 
-	public void setSolid(boolean b) {
-		solid = b;
+	public String getType() {
+		return type;
 	}
-
 }

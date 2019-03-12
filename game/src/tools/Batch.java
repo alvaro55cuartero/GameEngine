@@ -18,8 +18,8 @@ public class Batch {
 		return "#" + id + ":" + width + ":" + heigth + ";" + entities;
 	}
 
-	public void add(float x, float y, float z) {
-		entities = entities + "\n" + x + ":" + y + ":" + z + ";";
+	public void add(float x, float y, float z, int colision) {
+		entities = entities + "\n" + x + ":" + y + ":" + z + ":" + colision + ";";
 	}
 
 }

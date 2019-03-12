@@ -1,37 +1,33 @@
 package editor;
 
-import org.joml.Vector3f;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 import controls.Input;
-import graphics.MasterRenderer;
-import objeto.BotonEntity;
-import objeto.PlaneEntity;
+import objeto.EntityGUI;
 
-public class MenuList extends PlaneEntity {
-	BotonEntity entities[];
+public class MenuList extends EntityGUI {
+	EntityGUI entities[];
 
 	public int current = 0;
 	int count = 0;
 
-	public MenuList(BotonEntity entities[], Vector3f position, float sx, float sy) {
+	public MenuList(EntityGUI entities[], Vector2f position, float sx, float sy) {
 		super(16, position, sx, sy);
 		this.entities = entities;
 	}
 
 	public void tick() {
 		select();
-		entities[current].tick();
 	}
 
 	public void render() {
-		MasterRenderer.processEntityGUI(this);
+		// MasterRenderer.processEntityGUI(this);
 
 		entities[current].render();
 	}
 
 	public void reset() {
-		entities[current].reset();
 	}
 
 	public void dispose() {
@@ -41,11 +37,11 @@ public class MenuList extends PlaneEntity {
 	private void select() {
 		if (Input.get(GLFW.GLFW_KEY_W) && count == 0 && current > 0) {
 			current--;
-			count = 20;
+			count = 10;
 		}
 		if (Input.get(GLFW.GLFW_KEY_S) && count == 0 && current < entities.length - 1) {
 			current++;
-			count = 20;
+			count = 10;
 
 		}
 		if (count > 0) {

@@ -1,18 +1,18 @@
 package stateManager;
 
-import org.joml.Vector3f;
+import org.joml.Vector2f;
 
 import graphics.MasterRenderer;
-import objeto.PlaneEntity;
+import objeto.EntityGUI;
 import stateManager.StateMachine.state;
 
 public class StateCarga extends State {
 
-	PlaneEntity background;
+	EntityGUI background;
 	boolean ready = true;
 
 	public StateCarga() {
-		background = new PlaneEntity(5, new Vector3f(-5f, -5f, -5), 100, 100);
+		background = new EntityGUI(5, new Vector2f(-5f, -5f), 100, 100);
 
 	}
 
