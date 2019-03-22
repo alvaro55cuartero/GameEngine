@@ -33,8 +33,6 @@ public class Debug {
 	}
 
 	public static String debugInfo(boolean console) {
-		if() {
-			
-		}
+		return null;
 	}
 }

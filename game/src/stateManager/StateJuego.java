@@ -26,6 +26,8 @@ public class StateJuego extends State {
 	}
 
 	public void tick(StateMachine stateMachine) {
+
+		masterColisions.testJugado(jugador, masterChunk.getColision());
 		jugador.tick();
 
 		if (Input.get(GLFW.GLFW_KEY_ESCAPE)) {
@@ -35,7 +37,6 @@ public class StateJuego extends State {
 			freeMode = true;
 		}
 		if (Input.get(GLFW.GLFW_KEY_O)) {
-			camera.setDir(new Vector3f(0, 0, 0));
 			camera.setPosition(new Vector3f(0, 0, 20));
 			freeMode = false;
 		}
@@ -49,20 +50,16 @@ public class StateJuego extends State {
 			camera.moveFree();
 		}
 
-		// masterChunk.setActive();
 		masterChunk.setActive5(Math.floorDiv((int) jugador.getPosition().x, 16),
 				Math.floorDiv((int) jugador.getPosition().y, 16), Math.floorDiv((int) jugador.getPosition().z, 16));
-
-		if (!jugador.onGround) {
-			masterColisions.testJugador(jugador, masterChunk.getEntities());
-		}
 
 	}
 
 	public void render() {
 		masterColisions.render();
 		masterChunk.render();
-		jugador.render(camera);
+		masterChunk.renderDebug();
+		jugador.render();
 		// level.render(camera);
 	}
 

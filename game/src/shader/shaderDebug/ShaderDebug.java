@@ -1,4 +1,4 @@
-package shader.shader3D;
+package shader.shaderDebug;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -6,22 +6,21 @@ import org.joml.Vector3f;
 import main.Camera;
 import shader.Shader;
 
-public class StaticShader extends Shader {
+public class ShaderDebug extends Shader {
 
-	private static final String VERTEX_FILE = "src/shader/shader3D/vertexShader";
-	private static final String FRAGMENT_FILE = "src/shader/shader3D/fragmentShader";
+	private static final String VERTEX_FILE = "src/shader/shaderDebug/DebugVertexShader";
+	private static final String FRAGMENT_FILE = "src/shader/shaderDebug/DebugFragmentShader";
 
 	private int locationTransformationMatrix;
 	private int locationProjectionMatrix;
 	private int locationViewMatrix;
 
-	public StaticShader() {
+	public ShaderDebug() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
 
 	public void bindAttributes() {
 		super.bindAttributes(0, "position");
-		super.bindAttributes(1, "textureCoords");
 	}
 
 	protected void getAllUniformLocations() {
@@ -51,5 +50,4 @@ public class StaticShader extends Shader {
 	public void loadViewMatrix(Matrix4f matrix) {
 		super.loadMatrix(locationViewMatrix, matrix);
 	}
-
 }

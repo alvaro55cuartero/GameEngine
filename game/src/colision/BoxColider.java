@@ -1,31 +1,48 @@
 package colision;
 
-import org.joml.Rectanglef;
+import org.joml.AABBf;
+import org.joml.Vector3f;
 
-public class BoxColider extends Colider {
+import graphics.MasterRenderer;
+import objeto.EntityDebug;
 
-	private Rectanglef rect;
-	private float capa;
+public class BoxColider {
 
-	public BoxColider(float minX, float minY, float maxX, float maxY, float capa) {
-		rect = new Rectanglef(minX, minY, maxX, maxY);
-		this.setCapa(capa);
+	private AABBf colider;
+	private EntityDebug debug;
+
+	public BoxColider(float x, float y, float z, float sx, float sy, float sz) {
+		this.colider = new AABBf(x, y, z, x + sx, y + sy, z + sz);
+		debug = new EntityDebug(new Vector3f(x, y, z), 0, 0, 0, sx, sy, sz);
+
 	}
 
-	public Rectanglef getRect() {
-		return rect;
+	public BoxColider(String txt) {
+		String[] arg = txt.split(":");
+		float x = Float.parseFloat(arg[0]);
+		float y = Float.parseFloat(arg[1]);
+		float z = Float.parseFloat(arg[2]);
+		float sx = Float.parseFloat(arg[3]);
+		float sy = Float.parseFloat(arg[4]);
+		float sz = Float.parseFloat(arg[5]);
+		this.colider = new AABBf(x, y, z, x + sx, y + sy, z + sz);
+		debug = new EntityDebug(new Vector3f(x, y, z), 0, 0, 0, sx, sy, sz);
 	}
 
-	public void setRect(Rectanglef rect) {
-		this.rect = rect;
+	public void render() {
+		MasterRenderer.processEntityDebug(debug);
 	}
 
-	public float getCapa() {
-		return capa;
+	public AABBf getColider() {
+		return colider;
 	}
 
-	public void setCapa(float capa) {
-		this.capa = capa;
+	public void setColider(AABBf colider) {
+		this.colider = colider;
 	}
 
+	public String toString() {
+		return colider.minX + ":" + colider.minY + ":" + colider.minZ + ":" + (colider.maxX - colider.minX) + ":"
+				+ (colider.maxY - colider.minY) + ":" + (colider.maxZ - colider.minZ) + ";\n";
+	}
 }

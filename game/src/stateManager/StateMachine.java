@@ -17,6 +17,8 @@ public class StateMachine {
 
 	public StateMachine() {
 		setCurrentState(state.CARGA);
+		MasterRenderer.processTexturedModels("res/mapa/list");
+
 	}
 
 	public void tick() {
@@ -36,54 +38,34 @@ public class StateMachine {
 	}
 
 	private void loopState() {
+
 		switch (currentState) {
 		case CARGA:
 			debug("cargando");
-			MasterRenderer.resetTexturedModels();
-			MasterRenderer.processTexturedModels("res/mapa/list");
-			MasterRenderer.changeView(MasterRenderer.TYPE_ORTHO);
 			mainState = new StateCarga();
 			break;
 		case MENU_INICIO:
 			debug("menu inicio");
-			MasterRenderer.resetTexturedModels();
-			MasterRenderer.processTexturedModels("res/mapa/list");
-			MasterRenderer.changeView(MasterRenderer.TYPE_ORTHO);
 			mainState = new StateMenuInicio();
 			break;
 		case JUEGO:
 			debug("juego");
-			MasterRenderer.resetTexturedModels();
-			MasterRenderer.processTexturedModels("res/mapa/list");
-			MasterRenderer.changeView(MasterRenderer.TYPE_PERSPECTIVE);
 			mainState = new StateJuego();
 			break;
 		case MENU_PAUSA:
 			debug("menu pausa");
-			MasterRenderer.resetTexturedModels();
-			MasterRenderer.processTexturedModels("res/mapa/list");
-			MasterRenderer.changeView(MasterRenderer.TYPE_ORTHO);
 			mainState = new StateMenuPausa();
 
 			break;
 		case MENU_INVENTARIO:
 			debug("menu inventario");
-			MasterRenderer.resetTexturedModels();
-			MasterRenderer.processTexturedModels("res/mapa/list");
-			MasterRenderer.changeView(MasterRenderer.TYPE_ORTHO);
 			break;
 		case EDITOR:
 			debug("editor");
-			MasterRenderer.resetTexturedModels();
-			MasterRenderer.processTexturedModels("res/mapa/list");
-			MasterRenderer.changeView(MasterRenderer.TYPE_ORTHO);
 			mainState = new StateEditor();
 			break;
 		case MENU_OPCIONES:
 			debug("menu opciones");
-			MasterRenderer.resetTexturedModels();
-			MasterRenderer.processTexturedModels("res/mapa/list");
-			MasterRenderer.changeView(MasterRenderer.TYPE_ORTHO);
 			mainState = new StateMenuOpciones();
 			break;
 		default:

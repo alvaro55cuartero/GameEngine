@@ -39,13 +39,6 @@ public class Main {
 		stateMachine = new StateMachine();
 		TextMaster.init();
 
-		// int[] data = new int[1200 * 1200];
-		//
-		// for (int i = 0; i < 1200 * 1200; i++) {
-		// data[i] = 0xff0100ff;
-		// }
-		//
-		// FileUtils.crearImagen(data, 1200, 1200, "res/mapa/mapa.png");
 	}
 
 	private void loop() {
@@ -66,7 +59,6 @@ public class Main {
 
 	private void render() {
 		stateMachine.render();
-
 		TextMaster.render();
 		glfwSwapBuffers(this.ventana.window);
 	}

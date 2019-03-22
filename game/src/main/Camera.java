@@ -1,29 +1,25 @@
 package main;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import controls.Input;
 import controls.InputCursor;
-import graphics.MasterRenderer;
 import objeto.Jugador;
 
 public class Camera {
 
 	private Vector3f position = new Vector3f(0, 0, 20);
-	private float pitch;
-	private float yaw;
-	private float roll;
-	private float speed = 0.60f;
-	private float speedcam = 2.1f;
-
-	private int count;
+	private Quaternionf rotation = new Quaternionf();
+	private float speed = 0.6f;
+	private float speedcam = 0.01f;
 
 	public Camera() {
 	}
 
 	public void moveJuego(Jugador jugador) {
-		roll = 5;
+
 		float dx = jugador.getPosition().x - this.getPosition().x;
 		float dy = jugador.getPosition().y - 1 - this.getPosition().y;
 
@@ -33,86 +29,95 @@ public class Camera {
 	}
 
 	public void moveEditor() {
-		if (count > 0) {
-			count--;
+		if (Input.get(GLFW.GLFW_KEY_W)) {
+			this.position.x += 0.4f * Math.sin(Math.toRadians(getPitch()));
+			this.position.y -= 0.4f * Math.sin(Math.toRadians(getRoll()));
+			this.position.z -= 0.4f * Math.cos(Math.toRadians(getPitch()));
 		}
-		if (Input.get(GLFW.GLFW_KEY_W) && count == 0) {
-			this.position.y += 1f;
-			count = 10;
+		if (Input.get(GLFW.GLFW_KEY_A)) {
+			this.position.x -= 0.4f * Math.cos(Math.toRadians(getPitch()));
+			this.position.z -= 0.4f * Math.sin(Math.toRadians(getPitch()));
 		}
-		if (Input.get(GLFW.GLFW_KEY_A) && count == 0 && this.position.x > 0) {
-			this.position.x -= 1f;
-			count = 10;
+		if (Input.get(GLFW.GLFW_KEY_S)) {
+			this.position.x -= 0.4f * Math.sin(Math.toRadians(getPitch()));
+			this.position.y += 0.4f * Math.sin(Math.toRadians(getRoll()));
+			this.position.z += 0.4f * Math.cos(Math.toRadians(getPitch()));
 		}
-		if (Input.get(GLFW.GLFW_KEY_S) && count == 0 && this.position.y > 0) {
-			this.position.y -= 1f;
-			count = 10;
+		if (Input.get(GLFW.GLFW_KEY_D)) {
+
+			this.position.x += 0.4f * Math.cos(Math.toRadians(getPitch()));
+			this.position.z += 0.4f * Math.sin(Math.toRadians(getPitch()));
 		}
-		if (Input.get(GLFW.GLFW_KEY_D) && count == 0) {
-			this.position.x += 1f;
-			count = 10;
+		if (Input.get(GLFW.GLFW_KEY_SPACE)) {
+			this.position.y += 0.5f;
 		}
-		if (Input.get(GLFW.GLFW_KEY_Q) && count == 0) {
-			MasterRenderer.zoom -= 0.1f;
-			count = 10;
+
+		if (Input.get(GLFW.GLFW_KEY_UP) && getRoll() > -80) {
+			rotation.rotateY(-0.04f);
 		}
-		if (Input.get(GLFW.GLFW_KEY_E) && count == 0) {
-			MasterRenderer.zoom += 0.1f;
-			count = 10;
+		if (Input.get(GLFW.GLFW_KEY_DOWN) && getRoll() < 80) {
+			rotation.rotateY(0.04f);
+		}
+
+		if (Input.get(GLFW.GLFW_KEY_LEFT)) {
+			rotation.rotateLocalX(-0.04f);
+		}
+
+		if (Input.get(GLFW.GLFW_KEY_RIGHT)) {
+			rotation.rotateLocalX(0.04f);
 		}
 
 	}
 
 	public void moveFree() {
 		if (Input.get(GLFW.GLFW_KEY_W)) {
-			this.position.x += 0.4f * Math.sin(Math.toRadians(pitch));
-			this.position.y -= 0.4f * Math.sin(Math.toRadians(roll));
-			this.position.z -= 0.4f * Math.cos(Math.toRadians(pitch));
+			this.position.x += 0.4f * Math.sin(Math.toRadians(getPitch()));
+			this.position.y -= 0.4f * Math.sin(Math.toRadians(getRoll()));
+			this.position.z -= 0.4f * Math.cos(Math.toRadians(getPitch()));
 		}
 		if (Input.get(GLFW.GLFW_KEY_A)) {
-			this.position.x -= 0.4f * Math.cos(Math.toRadians(pitch));
-			this.position.z -= 0.4f * Math.sin(Math.toRadians(pitch));
+			this.position.x -= 0.4f * Math.cos(Math.toRadians(getPitch()));
+			this.position.z -= 0.4f * Math.sin(Math.toRadians(getPitch()));
 		}
 		if (Input.get(GLFW.GLFW_KEY_S)) {
-			this.position.x -= 0.4f * Math.sin(Math.toRadians(pitch));
-			this.position.y += 0.4f * Math.sin(Math.toRadians(roll));
-			this.position.z += 0.4f * Math.cos(Math.toRadians(pitch));
+			this.position.x -= 0.4f * Math.sin(Math.toRadians(getPitch()));
+			this.position.y += 0.4f * Math.sin(Math.toRadians(getRoll()));
+			this.position.z += 0.4f * Math.cos(Math.toRadians(getPitch()));
 		}
 		if (Input.get(GLFW.GLFW_KEY_D)) {
 
-			this.position.x += 0.4f * Math.cos(Math.toRadians(pitch));
-			this.position.z += 0.4f * Math.sin(Math.toRadians(pitch));
+			this.position.x += 0.4f * Math.cos(Math.toRadians(getPitch()));
+			this.position.z += 0.4f * Math.sin(Math.toRadians(getPitch()));
 		}
 		if (Input.get(GLFW.GLFW_KEY_SPACE)) {
 
 			this.position.y += 0.5f;
 		}
-		if (roll > -90) {
+		if (getRoll() > -80) {
 			if (Input.get(GLFW.GLFW_KEY_UP)) {
-				this.roll -= 2.5f;
+				rotation.rotateY(-0.04f);
 			} else if (InputCursor.getDy() > 0) {
-				this.roll += InputCursor.getDy() * speed;
+				rotation.rotateY(InputCursor.getDy() * speedcam);
 			}
 		}
-		if (roll < 90) {
+		if (getRoll() < 80) {
 			if (Input.get(GLFW.GLFW_KEY_DOWN)) {
-				this.roll += 2.5f;
+				rotation.rotateY(0.04f);
 			} else if (InputCursor.getDy() < 0) {
-				this.roll -= -InputCursor.getDy() * speed;
+				rotation.rotateY(InputCursor.getDy() * speedcam);
 			}
 		}
 
 		if (Input.get(GLFW.GLFW_KEY_LEFT)) {
-			this.pitch -= 2.5f;
+			rotation.rotateLocalX(-0.04f);
 		} else if (InputCursor.getDx() < 0) {
-			this.pitch -= -InputCursor.getDx() * speed;
+			rotation.rotateLocalX(InputCursor.getDx() * speedcam);
 		}
 
 		if (Input.get(GLFW.GLFW_KEY_RIGHT)) {
-			this.pitch += 2.5f;
-		}
-		if (InputCursor.getDx() > 0) {
-			this.pitch += InputCursor.getDx() * speed;
+			rotation.rotateLocalX(0.04f);
+		} else if (InputCursor.getDx() > 0) {
+			rotation.rotateLocalX(InputCursor.getDx() * speedcam);
 		}
 	}
 
@@ -133,37 +138,19 @@ public class Camera {
 	}
 
 	public float getPitch() {
-		return pitch;
+		return (float) Math.toDegrees(getEuler().x);
 	}
 
 	public float getYaw() {
-		return yaw;
+		return (float) Math.toDegrees(getEuler().z);
 	}
 
 	public float getRoll() {
-		return roll;
+		return (float) Math.toDegrees(getEuler().y);
 	}
 
 	public void setPosition(Vector3f position) {
 		this.position = position;
-	}
-
-	public void setDir(Vector3f dir) {
-		this.pitch = dir.x;
-		this.roll = dir.y;
-		this.yaw = dir.z;
-	}
-
-	public void setPitch(float pitch) {
-		this.pitch = pitch;
-	}
-
-	public void setYaw(float yaw) {
-		this.yaw = yaw;
-	}
-
-	public void setRoll(float roll) {
-		this.roll = roll;
 	}
 
 	public void setSpeed(float speed) {
@@ -174,8 +161,8 @@ public class Camera {
 		this.speedcam = speedcam;
 	}
 
-	public void setCount(int count) {
-		this.count = count;
+	public Vector3f getEuler() {
+		return rotation.getEulerAnglesXYZ(new Vector3f());
 	}
 
 }

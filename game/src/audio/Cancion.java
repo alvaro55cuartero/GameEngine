@@ -6,7 +6,7 @@ public class Cancion {
 	Source drum1;
 
 	public Cancion() {
-		drum1.play(buffer);
+
 	}
 
 }

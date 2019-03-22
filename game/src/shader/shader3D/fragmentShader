@@ -1,15 +1,27 @@
 #version 400 core
 
 in vec2 passTextureCoords;
+in vec3 passNormals;
+in vec3 fragPos;
+
+uniform sampler2D textureSampler;
+uniform vec3 lightPos;
 
 out vec4 out_color;
 
-uniform sampler2D textureSampler;
-
 void main (void) {
 
-	out_color = texture(textureSampler, passTextureCoords);
+	vec3 norm = normalize(passNormals);
+	vec3 lightDir = normalize(lightPos - fragPos); 
+	float diff = max(dot(norm, lightDir), 0.0);
+	vec3 diffuse = diff * vec3(1,0.9f,0.34f);
+	
+	float ambientStrength = 0.5;
+    vec3 ambient = ambientStrength * vec3(1,1,1);
+
 	vec4 textureColor = texture(textureSampler, passTextureCoords);
+	out_color = textureColor * vec4((diffuse + ambient),1);
+	
 	if(textureColor.a < 0.5){ 
 		discard;
 	}

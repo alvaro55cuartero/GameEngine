@@ -5,9 +5,9 @@ import java.util.ArrayList;
 
 import org.joml.Vector3f;
 
+import colision.BoxColider;
 import graphics.MasterRenderer;
 import objeto.Entity3D;
-import objeto.EntityPlane;
 import tools.Lector;
 
 public class MasterChunk {
@@ -16,9 +16,13 @@ public class MasterChunk {
 	private Chunk[] chunks = new Chunk[size * size * size];
 
 	public MasterChunk() {
+		load("res/mapa/mapa6X");
+	}
+
+	private void load(String ruta) {
 		try {
-			String[] parrafos = Lector.leerArchivoTexto("res/mapa/mapaXXX").replaceAll(" ", "").replaceAll("\n", "")
-					.split("#");
+			String[] parrafos = Lector.leerArchivoTexto(ruta).replaceAll(" ", "").replaceAll("\n", "").split("#");
+
 			for (int i = 0; i < parrafos.length; i++) {
 				chunks[i] = new Chunk(parrafos[i]);
 			}
@@ -31,6 +35,16 @@ public class MasterChunk {
 		for (Chunk chunk : chunks) {
 			if (chunk.isActive()) {
 				MasterRenderer.processEntities3D(chunk.getEntities());
+			}
+		}
+	}
+
+	public void renderDebug() {
+		for (Chunk chunk : chunks) {
+			if (chunk.isActive()) {
+				for (int i = 0; i < chunk.getColiders().size(); i++) {
+					chunk.getColiders().get(i).render();
+				}
 			}
 		}
 	}
@@ -49,12 +63,6 @@ public class MasterChunk {
 						if (entities.get(i).getPosition().z == capa) {
 							MasterRenderer.processEntity3D(entities.get(i));
 						}
-					}
-					if (entities.get(i).isSolid()) {
-						MasterRenderer.processEntity3D(new EntityPlane(15,
-								new Vector3f(entities.get(i).getPosition().x, entities.get(i).getPosition().y,
-										entities.get(i).getPosition().z + 0.1f),
-								entities.get(i).getSx(), entities.get(i).getSy(), false));
 					}
 				}
 			}
@@ -94,6 +102,15 @@ public class MasterChunk {
 			entities.addAll(chunk.getEntities());
 		}
 		return entities;
+	}
+
+	public ArrayList<BoxColider> getColision() {
+		ArrayList<BoxColider> coliders = new ArrayList<BoxColider>();
+		Chunk[] chunks = getActiveChunks();
+		for (Chunk chunk : chunks) {
+			coliders.addAll(chunk.getColiders());
+		}
+		return coliders;
 	}
 
 	public void cleanChunks() {
@@ -295,9 +312,9 @@ public class MasterChunk {
 			chunk.update();
 			text += chunk.getText() + "#\n";
 		}
-		text.substring(0, text.length() - 1);
+		text.substring(0, text.length() - 2);
 		try {
-			Lector.createFile("res/mapa/mapaXXX", text);
+			Lector.createFile("res/mapa/mapa6X", text);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

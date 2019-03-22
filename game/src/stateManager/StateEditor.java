@@ -9,13 +9,14 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import controls.Input;
-import editor.MenuLateral;
+import controls.MousePicker;
 import fontMeshCreator.EntityGUIText;
 import fontMeshCreator.FontType;
 import fontRendering.TextMaster;
 import graphics.Loader;
 import graphics.MasterRenderer;
 import level.MasterChunk;
+import menuManager.MenuLateral;
 import objeto.Entity;
 import objeto.EntityPlane;
 import stateManager.StateMachine.state;
@@ -31,23 +32,30 @@ public class StateEditor extends State {
 	private int capa = 0;
 	private int ancho = 1;
 	private int alto = 1;
+	private int alcance = 5;
+	private float rx = 0;
+	private float ry = 0;
+	private float rz = 0;
 
 	private boolean freeMode = false;
 	private boolean capaUnica = false;
-	private boolean solid = false;
 
 	private List<Entity> entities = new ArrayList<Entity>();
 	private MenuLateral menuLateral;
 	private Focus currentFocus = Focus.VIEWPORT;
-	private EntityPlane focusEntity;
+	private EntityPlane previewEntity;
 	private EntityGUIText text;
 	private MasterChunk masterChunk;
+	private MousePicker mousePicker;
 
 	public StateEditor() {
 		masterChunk = new MasterChunk();
 		menuLateral = new MenuLateral("res/mapa/list");
-		focusEntity = new EntityPlane(15, new Vector3f(camera.getPosition().x, camera.getPosition().y, capa + 0.1f), 1,
-				1, false);
+
+		previewEntity = new EntityPlane(id,
+				new Vector3f(Math.round(camera.getPosition().x), Math.round(camera.getPosition().y), capa), rx, ry, rz,
+				ancho, alto);
+		mousePicker = new MousePicker(camera, MasterRenderer.projectionMatrixPerspective());
 
 		FontType font = new FontType(Loader.loadTexture("res/Fonts/arial.png"), new File("res/Fonts/arial.fnt"));
 		text = new EntityGUIText(10, "capa: " + capa, 1, font, new Vector2f(0, 0), 0.5f, 10f, true);
@@ -58,7 +66,8 @@ public class StateEditor extends State {
 	}
 
 	public void tick(StateMachine stateMachine) {
-		MasterRenderer.tick();
+		menuLateral.tick(true);
+		mousePicker.tick();
 		if (count > 0) {
 			count--;
 		}
@@ -69,14 +78,15 @@ public class StateEditor extends State {
 		int x = Math.floorDiv((int) this.camera.getPosition().x, 16);
 		int y = Math.floorDiv((int) this.camera.getPosition().y, 16);
 		int z = Math.floorDiv(capa, 16);
-		focusEntity.setPosition(new Vector3f(camera.getPosition().x, camera.getPosition().y, capa + 0.1f));
+		Vector3f pos = mousePicker.getPos(alcance);
+		previewEntity = new EntityPlane(id, new Vector3f(Math.round(pos.x), Math.round(pos.y), Math.round(pos.z)), rx,
+				ry, rz, ancho, alto);
 		masterChunk.setActive5(x, y, z);
 	}
 
 	public void render() {
-		if (currentFocus == Focus.VIEWPORT) {
-			MasterRenderer.processEntity3D(focusEntity);
-		}
+
+		MasterRenderer.processEntity3D(previewEntity);
 		menuLateral.render(camera);
 
 		masterChunk.renderCapa(capa, capaUnica);
@@ -90,25 +100,18 @@ public class StateEditor extends State {
 	public void focus(StateMachine stateMachine) {
 		switch (currentFocus) {
 		case VIEWPORT:
-			if (Input.get(GLFW.GLFW_KEY_ENTER) && !is(camera.getPosition()) && !freeMode) {
-				int xChunk = Math.floorDiv((int) camera.getPosition().x, 16);
-				int yChunk = Math.floorDiv((int) camera.getPosition().y, 16);
-				int zChunk = Math.floorDiv((int) capa, 16);
-				masterChunk.getChunk(xChunk, yChunk, zChunk).addEntity(new EntityPlane(id,
-						new Vector3f(camera.getPosition().x, camera.getPosition().y, capa), ancho, alto, solid));
+			if (Input.get(GLFW.GLFW_KEY_ENTER)) {
+				int xChunk = Math.floorDiv((int) previewEntity.getPosition().x, 16);
+				int yChunk = Math.floorDiv((int) previewEntity.getPosition().y, 16);
+				int zChunk = Math.floorDiv((int) previewEntity.getPosition().z, 16);
+				masterChunk.getChunk(xChunk, yChunk, zChunk).addEntity(previewEntity);
 			}
 			if (Input.get(GLFW.GLFW_KEY_BACKSPACE)) {
-				int xChunk = Math.floorDiv((int) camera.getPosition().x, 16);
-				int yChunk = Math.floorDiv((int) camera.getPosition().y, 16);
-				int zChunk = Math.floorDiv((int) capa, 16);
-				masterChunk.getChunk(xChunk, yChunk, zChunk)
-						.removeEntity(new Vector3f(camera.getPosition().x, camera.getPosition().y, capa));
+				int xChunk = Math.floorDiv((int) previewEntity.getPosition().x, 16);
+				int yChunk = Math.floorDiv((int) previewEntity.getPosition().y, 16);
+				int zChunk = Math.floorDiv((int) previewEntity.getPosition().z, 16);
+				masterChunk.getChunk(xChunk, yChunk, zChunk).removeEntity(previewEntity.getPosition());
 
-			}
-			if (Input.get(GLFW.GLFW_KEY_C) && count == 0) {
-				menuLateral.setVisible(true);
-				currentFocus = Focus.MENULATERAL;
-				count = 20;
 			}
 
 			if (Input.get(GLFW.GLFW_KEY_N) && count == 0 && capa > 0) {
@@ -122,23 +125,18 @@ public class StateEditor extends State {
 				count = 20;
 				text.setText("" + capa);
 			}
+			if (Input.get(GLFW.GLFW_KEY_B) && count == 0 && id < 24) {
+				id++;
+				count = 10;
+			}
+
+			if (Input.get(GLFW.GLFW_KEY_V) && count == 0 && id > 0) {
+				id--;
+				count = 10;
+			}
 			if (Input.get(GLFW.GLFW_KEY_O) && count == 0) {
 				capaUnica = !capaUnica;
 				count = 20;
-			}
-
-			if (Input.get(GLFW.GLFW_KEY_P) && count == 0) {
-				if (freeMode) {
-					MasterRenderer.changeView(MasterRenderer.TYPE_ORTHO);
-					camera.setDir(new Vector3f(0, 0, 0));
-					camera.setPosition(new Vector3f(0, 0, 10));
-					freeMode = false;
-					count = 20;
-				} else {
-					MasterRenderer.changeView(MasterRenderer.TYPE_PERSPECTIVE);
-					freeMode = true;
-					count = 20;
-				}
 			}
 			if (Input.get(GLFW.GLFW_KEY_I) && count == 0) {
 				alto++;
@@ -156,22 +154,30 @@ public class StateEditor extends State {
 				ancho++;
 				count = 20;
 			}
+			if (Input.get(GLFW.GLFW_KEY_G) && count == 0) {
+				rx += 90;
+				count = 20;
+			}
 			if (Input.get(GLFW.GLFW_KEY_H) && count == 0) {
-				solid = !solid;
+				ry += 90;
+				count = 20;
+			}
+			if (Input.get(GLFW.GLFW_KEY_F) && count == 0) {
+				rz += 90;
+				count = 20;
+			}
+			if (Input.get(GLFW.GLFW_KEY_Y) && count == 0) {
+				guardarMapa();
+				System.out.println("save");
 				count = 20;
 			}
 			if (!freeMode) {
 				camera.moveEditor();
-			} else {
-				camera.moveFree();
 			}
-
 			break;
 		case MENULATERAL:
-			menuLateral.tick(stateMachine, this);
-			id = menuLateral.menuList.current;
+			menuLateral.tick(true);
 			if (Input.get(GLFW.GLFW_KEY_C) && count == 0) {
-				menuLateral.setVisible(false);
 				currentFocus = Focus.VIEWPORT;
 				count = 20;
 			}
@@ -190,7 +196,9 @@ public class StateEditor extends State {
 
 	public boolean is(Vector3f v) {
 		for (Entity entity : entities) {
-			if (new Vector3f(v.x, v.y, capa).equals(entity.getPosition())) {
+			if (new Vector3f(v.x, v.y, v.z).equals(entity.getPosition()) && entity.getRx() == rx && entity.getRy() == ry
+					&& entity.getRz() == rz) {
+
 				return true;
 			}
 		}
@@ -204,5 +212,4 @@ public class StateEditor extends State {
 	public void cargarMapa() {
 
 	}
-
 }

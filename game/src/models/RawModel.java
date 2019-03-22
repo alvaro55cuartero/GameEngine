@@ -18,6 +18,12 @@ public class RawModel {
 		this.count = model.count;
 	}
 
+	public RawModel(int[] indices, float[] positions, float[] textureCoords, float[] normals) {
+		RawModel model = Loader.loadToVao(indices, positions, textureCoords, normals);
+		this.id = model.id;
+		this.count = model.count;
+	}
+
 	public int getId() {
 		return id;
 	}

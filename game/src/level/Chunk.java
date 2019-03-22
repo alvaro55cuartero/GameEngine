@@ -4,57 +4,54 @@ import java.util.ArrayList;
 
 import org.joml.Vector3f;
 
+import colision.BoxColider;
 import objeto.Entity3D;
 import objeto.EntityPlane;
 
 public class Chunk {
 
-	private String text;
+	private String text = "";
+	private String textEnt = "";
+	private String textCol = "";
 	private int x;
 	private int y;
 	private int z;
 	private int size = 16;
 	private boolean active = false;
 	private ArrayList<Entity3D> entities = new ArrayList<Entity3D>();
+	private ArrayList<BoxColider> coliders = new ArrayList<BoxColider>();
 
 	public Chunk(String text) {
-		this.text = text;
-		load();
+		load(text);
 	}
 
-	public void load() {
-		String[] lines = text.split("\\|");
-		String[] id = lines[0].split(":");
-		x = Integer.parseInt(id[0]);
-		y = Integer.parseInt(id[1]);
-		z = Integer.parseInt(id[2]);
-		if (lines.length > 1) {
-			String[] ent = lines[1].split(";");
-			for (int i = 0; i < ent.length; i++) {
-				entities.add(toEntity(ent[i]));
+	public void load(String text) {
+		String[] partes = text.split("\\|");
+		String[] args = partes[0].split(":");
+		x = Integer.parseInt(args[0]);
+		y = Integer.parseInt(args[1]);
+		z = Integer.parseInt(args[2]);
+		if (partes.length > 1) {
+			loadEnt(partes[1]);
+			if (partes.length > 2) {
+				loadCol(partes[2]);
 			}
 		}
 	}
 
-	public Entity3D toEntity(String txt) {
-		String[] arg = txt.split(":");
-		int id = Integer.parseInt(arg[0]);
-		float x = Float.parseFloat(arg[1]);
-		float y = Float.parseFloat(arg[2]);
-		float z = Float.parseFloat(arg[3]);
-		float ancho = Float.parseFloat(arg[4]);
-		float alto = Float.parseFloat(arg[5]);
-		boolean solid = Boolean.parseBoolean(arg[6]);
-
-		return new EntityPlane(id, new Vector3f(x, y, z), ancho, alto, solid);
+	public void loadEnt(String txt) {
+		String[] ents = txt.split(";");
+		for (int i = 0; i < ents.length; i++) {
+			entities.add(new EntityPlane(ents[i]));
+		}
 	}
 
-	public ArrayList<Entity3D> getEntities() {
-		return entities;
-	}
+	public void loadCol(String txt) {
+		String[] col = txt.split(";");
+		for (int i = 0; i < col.length; i++) {
+			coliders.add(new BoxColider(col[i]));
+		}
 
-	public void setEntities(ArrayList<Entity3D> entities) {
-		this.entities = entities;
 	}
 
 	public boolean check(int x, int y, int z) {
@@ -67,20 +64,24 @@ public class Chunk {
 	public String editChunk(Entity3D[] entities) {
 		text += x + ":" + y + ":" + z + "|\n";
 		for (Entity3D entity : entities) {
-			text += entity.getTexturedModelId() + ":" + entity.getPosition().x + ":" + entity.getPosition().y + ":"
-					+ entity.getPosition().z + ":" + entity.getSx() + ":" + entity.getSy() + ":" + entity.isSolid()
-					+ ";\n";
+			textEnt += entity.toString();
 		}
 
-		return text;
+		return textEnt;
+	}
+
+	public void clean() {
+		text = x + ":" + y + ":" + z + "|\n";
+		textEnt = "";
+		textCol = "";
 	}
 
 	public void addEntity(Entity3D entity) {
-		for (int i = 0; i < entities.size(); i++) {
-			if (entities.get(i).getPosition().equals(entity.getPosition(), 0)) {
-				return;
-			}
-		}
+		// for (int i = 0; i < entities.size(); i++) {
+		// if (entities.get(i).getPosition().equals(entity.getPosition(), 0)) {
+		// return;
+		// }
+		// }
 		entities.add(entity);
 	}
 
@@ -93,8 +94,31 @@ public class Chunk {
 		}
 	}
 
-	public void clean() {
-		text = x + ":" + y + ":" + z + "|\n";
+	public void update() {
+		clean();
+		for (Entity3D entity : entities) {
+			textEnt += entity.toString();
+		}
+		for (BoxColider colider : coliders) {
+			textCol += colider.toString();
+		}
+		text += textEnt + "|\n" + textCol + "";
+	}
+
+	public ArrayList<BoxColider> getColiders() {
+		return coliders;
+	}
+
+	public void setColiders(ArrayList<BoxColider> coliders) {
+		this.coliders = coliders;
+	}
+
+	public ArrayList<Entity3D> getEntities() {
+		return entities;
+	}
+
+	public void setEntities(ArrayList<Entity3D> entities) {
+		this.entities = entities;
 	}
 
 	public String getText() {
@@ -145,15 +169,4 @@ public class Chunk {
 		this.active = active;
 	}
 
-	public void update() {
-		clean();
-		for (Entity3D entity : entities) {
-			text += toString(entity);
-		}
-	}
-
-	private String toString(Entity3D entity) {
-		return entity.getTexturedModelId() + ":" + entity.getPosition().x + ":" + entity.getPosition().y + ":"
-				+ entity.getPosition().z + ":" + entity.getSx() + ":" + entity.getSy() + ":" + entity.isSolid() + ";\n";
-	}
 }

@@ -1,9 +1,11 @@
 package objeto;
 
+import org.joml.Intersectionf;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 import controls.Input;
+import controls.InputCursor;
 import graphics.MasterRenderer;
 
 public class EntityGUIBoton extends EntityGUI {
@@ -27,6 +29,11 @@ public class EntityGUIBoton extends EntityGUI {
 		ref = new EntityGUI(15, new Vector2f(position.x, position.y), sx, sy);
 	}
 
+	public EntityGUIBoton(int texturedModelId, Vector2f position, float sx, float sy) {
+		super(texturedModelId, position, sx, sy);
+		ref = new EntityGUI(15, new Vector2f(position.x, position.y), sx, sy);
+	}
+
 	public void tick() {
 		if (count > 0) {
 			count--;
@@ -37,13 +44,16 @@ public class EntityGUIBoton extends EntityGUI {
 		} else if (!press && Input.get(GLFW.GLFW_KEY_ENTER) && select && count == 0) {
 			press = true;
 			count = 20;
-		} // else if (!press && ColisionUtils.inside(this.position.x, this.position.y,
-			// InputCursor.coord().x, yp, x2, y2)
-			// && select && count == 0) {
-			// press = true;
-			// count = 20;
-			// }
+		} else if (!press && Intersectionf.testPointAar(InputCursor.coordInPix().x, InputCursor.coordInPix().y,
+				position.x, position.y, position.x + sx, position.y + sy) && select && count == 0) {
+			press = true;
+			count = 20;
+		}
 
+	}
+
+	public boolean intersect(Vector2f v) {
+		return Intersectionf.testPointAar(v.x, v.y, position.x, position.y, position.x + sx, position.y + sy);
 	}
 
 	public void render() {
