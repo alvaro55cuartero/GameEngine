@@ -16,7 +16,7 @@ import main.Const;
 import models.PlaneTexturedModel;
 import models.RawModel;
 import models.TexturedModel;
-import objeto.Entity;
+import objeto.entities.Entity;
 import shader.Shader;
 import shader.shaderGUI.ShaderGUI;
 

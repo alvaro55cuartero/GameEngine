@@ -2,7 +2,6 @@ package controls;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
-import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 
 public class Input implements GLFWKeyCallbackI {
 
@@ -12,22 +11,20 @@ public class Input implements GLFWKeyCallbackI {
 		keys[key] = action != GLFW.GLFW_RELEASE;
 	}
 
-	public void callback(long args) {
-
-		GLFWKeyCallbackI.super.callback(args);
-	}
-
+	// public void callback(long args) {
+	//
+	// GLFWKeyCallbackI.super.callback(args);
+	// }
+	//
+	// public String getSignature() {
+	// return GLFWKeyCallbackI.super.getSignature();
+	// }
 
 	public static boolean get(int index) {
 		if (index == -1) {
 			return false;
 		}
 		return keys[index];
-	}
-
-	
-	public String getSignature() {
-		return GLFWKeyCallbackI.super.getSignature();
 	}
 
 }

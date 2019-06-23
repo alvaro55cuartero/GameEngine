@@ -11,11 +11,11 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import main.Camera;
 import models.PlaneTexturedModel;
 import models.RawModel;
 import models.TexturedModel;
-import objeto.Entity;
+import objeto.Camera;
+import objeto.entities.Entity;
 import objeto.light.AmbientLight;
 import shader.Shader;
 import shader.shader3D.Shader3D;

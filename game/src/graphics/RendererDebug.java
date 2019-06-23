@@ -11,10 +11,10 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import main.Camera;
 import models.RawModel;
 import models.RawModelCuboLine;
-import objeto.Entity;
+import objeto.Camera;
+import objeto.entities.Entity;
 import shader.Shader;
 import shader.shaderDebug.ShaderDebug;
 

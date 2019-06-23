@@ -1,9 +1,8 @@
 package shader.shaderDebug;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
-import main.Camera;
+import objeto.Camera;
 import shader.Shader;
 
 public class ShaderDebug extends Shader {
@@ -39,8 +38,7 @@ public class ShaderDebug extends Shader {
 
 	public void loadViewMatrix(Camera camera) {
 		Matrix4f matrix = new Matrix4f();
-		matrix.rotate((float) Math.toRadians(camera.getRoll()), new Vector3f(1, 0, 0))
-				.rotate((float) Math.toRadians(camera.getPitch()), new Vector3f(0, 1, 0));
+		matrix.rotate(camera.getRotation());
 
 		matrix.translate(-camera.getPosition().x, -camera.getPosition().y, -camera.getPosition().z);
 

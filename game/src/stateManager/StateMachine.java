@@ -1,24 +1,29 @@
 package stateManager;
 
 import graphics.MasterRenderer;
-import main.Const;
+import stateManager.stateEditor.StateEditor;
+import stateManager.stateJuego.StateJuego;
 
 public class StateMachine {
 
 	private int count = 0;
+	private state currentState;
+	private state lastState;
+	private State mainState;
+	private boolean change;
 
 	public enum state {
 		CARGA, MENU_INICIO, JUEGO, MENU_PAUSA, MENU_INVENTARIO, EDITOR, MENU_OPCIONES
 	};
 
-	private state currentState;
-	public state lastState;
-	State mainState;
-
 	public StateMachine() {
 		setCurrentState(state.CARGA);
 		MasterRenderer.processTexturedModels("res/mapa/list");
+	}
 
+	public void input() {
+		loopState();
+		mainState.input();
 	}
 
 	public void tick() {
@@ -37,60 +42,62 @@ public class StateMachine {
 		mainState.reset();
 	}
 
-	private void loopState() {
-
-		switch (currentState) {
-		case CARGA:
-			debug("cargando");
-			mainState = new StateCarga();
-			break;
-		case MENU_INICIO:
-			debug("menu inicio");
-			mainState = new StateMenuInicio();
-			break;
-		case JUEGO:
-			debug("juego");
-			mainState = new StateJuego();
-			break;
-		case MENU_PAUSA:
-			debug("menu pausa");
-			mainState = new StateMenuPausa();
-
-			break;
-		case MENU_INVENTARIO:
-			debug("menu inventario");
-			break;
-		case EDITOR:
-			debug("editor");
-			mainState = new StateEditor();
-			break;
-		case MENU_OPCIONES:
-			debug("menu opciones");
-			mainState = new StateMenuOpciones();
-			break;
-		default:
-			break;
-		}
-
+	public void dispose() {
+		mainState.dispose();
 	}
 
-	private void debug(String txt) {
-		if (Const.debugState) {
-			System.out.println(txt);
+	private void loopState() {
+		if (change) {
+			switch (currentState) {
+			case CARGA:
+				// debug("cargando");
+				mainState = new StateCarga();
+				break;
+			case MENU_INICIO:
+				// debug("menu inicio");
+				mainState = new StateMenuInicio();
+				break;
+			case JUEGO:
+				// debug("juego");
+				mainState = new StateJuego();
+				break;
+			case MENU_PAUSA:
+				// debug("menu pausa");
+				mainState = new StateMenuPausa();
+
+				break;
+			case MENU_INVENTARIO:
+				// debug("menu inventario");
+				break;
+			case EDITOR:
+				// debug("editor");
+				mainState = new StateEditor();
+				break;
+			case MENU_OPCIONES:
+				// debug("menu opciones");
+				mainState = new StateMenuOpciones();
+				break;
+			default:
+				break;
+			}
+			change = false;
 		}
 	}
 
 	public void setCurrentState(state state) {
 		if (count == 0) {
-			lastState = currentState;
+			setLastState(currentState);
 			currentState = state;
-			loopState();
+			change = true;
 			count = 30;
 		}
 	}
 
-	public void cleanUp() {
-		mainState.cleanUp();
+	public state getLastState() {
+		return lastState;
 	}
 
+	public void setLastState(state lastState) {
+		this.lastState = lastState;
+	}
 }

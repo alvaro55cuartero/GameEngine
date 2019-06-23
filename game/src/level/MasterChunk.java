@@ -5,9 +5,8 @@ import java.util.ArrayList;
 
 import org.joml.Vector3f;
 
-import colision.BoxColider;
 import graphics.MasterRenderer;
-import objeto.Entity3D;
+import objeto.entities.Entity3D;
 import tools.Lector;
 
 public class MasterChunk {
@@ -16,7 +15,7 @@ public class MasterChunk {
 	private Chunk[] chunks = new Chunk[size * size * size];
 
 	public MasterChunk() {
-		load("res/mapa/mapa6X");
+		load("res/mapa/mapa7X");
 	}
 
 	private void load(String ruta) {
@@ -34,7 +33,7 @@ public class MasterChunk {
 	public void render() {
 		for (Chunk chunk : chunks) {
 			if (chunk.isActive()) {
-				MasterRenderer.processEntities3D(chunk.getEntities());
+				chunk.render();
 			}
 		}
 	}
@@ -42,9 +41,7 @@ public class MasterChunk {
 	public void renderDebug() {
 		for (Chunk chunk : chunks) {
 			if (chunk.isActive()) {
-				for (int i = 0; i < chunk.getColiders().size(); i++) {
-					chunk.getColiders().get(i).render();
-				}
+				chunk.renderDebug();
 			}
 		}
 	}
@@ -102,15 +99,6 @@ public class MasterChunk {
 			entities.addAll(chunk.getEntities());
 		}
 		return entities;
-	}
-
-	public ArrayList<BoxColider> getColision() {
-		ArrayList<BoxColider> coliders = new ArrayList<BoxColider>();
-		Chunk[] chunks = getActiveChunks();
-		for (Chunk chunk : chunks) {
-			coliders.addAll(chunk.getColiders());
-		}
-		return coliders;
 	}
 
 	public void cleanChunks() {

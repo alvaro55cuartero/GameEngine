@@ -3,17 +3,20 @@ package stateManager;
 import org.joml.Vector2f;
 
 import graphics.MasterRenderer;
-import objeto.EntityGUI;
+import main.Const;
+import objeto.entities.EntityGUI;
 import stateManager.StateMachine.state;
 
 public class StateCarga extends State {
 
-	EntityGUI background;
+	private EntityGUI background;
 	boolean ready = true;
 
 	public StateCarga() {
-		background = new EntityGUI(5, new Vector2f(-5f, -5f), 100, 100);
+		background = new EntityGUI(5, new Vector2f(0, 0), Const.width, Const.height);
+	}
 
+	public void input() {
 	}
 
 	public void tick(StateMachine stateMachine) {
@@ -24,5 +27,11 @@ public class StateCarga extends State {
 
 	public void render() {
 		MasterRenderer.processEntityGUI(background);
+	}
+
+	public void reset() {
+	}
+
+	public void dispose() {
 	}
 }

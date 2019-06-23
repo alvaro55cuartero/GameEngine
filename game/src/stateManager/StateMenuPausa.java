@@ -8,12 +8,14 @@ import stateManager.StateMachine.state;
 public class StateMenuPausa extends State {
 
 	public StateMenuPausa() {
+	}
 
+	public void input() {
 	}
 
 	public void tick(StateMachine stateMachine) {
 		if (Input.get(GLFW.GLFW_KEY_ESCAPE)) {
-			stateMachine.setCurrentState(stateMachine.lastState);
+			stateMachine.setCurrentState(stateMachine.getLastState());
 		}
 		if (Input.get(GLFW.GLFW_KEY_M)) {
 			stateMachine.setCurrentState(state.MENU_INICIO);
@@ -24,10 +26,11 @@ public class StateMenuPausa extends State {
 	}
 
 	public void render() {
-		// MasterRenderer.render(camera);
 	}
 
-	public void cleanUp() {
+	public void reset() {
+	}
 
+	public void dispose() {
 	}
 }

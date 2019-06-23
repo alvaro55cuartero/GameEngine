@@ -4,7 +4,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import fontRendering.TextMaster;
-import objeto.EntityGUI;
+import objeto.entities.EntityGUI;
 
 /**
  * Represents a piece of text in the game.

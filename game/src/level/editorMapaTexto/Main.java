@@ -15,20 +15,20 @@ public class Main {
 		String txt;
 
 		try {
-			txt = Lector.leerArchivoTexto("res/mapa/mapa5X").replaceAll("\n", "");
+			txt = Lector.leerArchivoTexto("res/mapa/mapa6X").replaceAll("\n", "");
 			String[] c = txt.split("#");
 			for (String chunk : c) {
 				main.chunks.add(new Chunk(chunk));
 			}
-			for (Chunk chunk : main.chunks) {
-				ArrayList<Ent> ents = chunk.entsOut();
-				ArrayList<EntCol> entsCol = chunk.entsColOut();
-				for (EntCol col : entsCol) {
-					main.insertCol(col);
-				}
-			}
+			// for (Chunk chunk : main.chunks) {
+			// ArrayList<Ent> ents = chunk.entsOut();
+			// ArrayList<EntCol> entsCol = chunk.entsColOut();
+			// for (EntCol col : entsCol) {
+			// main.insertCol(col);
+			// }
+			// }
 
-			Lector.createFile("res/mapa/mapa6X", main.toString());
+			Lector.createFile("res/mapa/mapa7X", main.toString());
 
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -37,9 +37,9 @@ public class Main {
 
 	public void insertCol(EntCol col) {
 		for (Chunk chunk : chunks) {
-			if (Math.floor(col.position.x / 16) == chunk.x) {
-				if (Math.floor(col.position.y / 16) == chunk.y) {
-					if (Math.floor(col.position.z / 16) == chunk.z) {
+			if (Math.floor(col.getPos().x / 16) == chunk.x) {
+				if (Math.floor(col.getPos().y / 16) == chunk.y) {
+					if (Math.floor(col.getPos().z / 16) == chunk.z) {
 						chunk.cols.add(col);
 					}
 				}

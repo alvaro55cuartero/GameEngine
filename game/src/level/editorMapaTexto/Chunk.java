@@ -40,7 +40,7 @@ public class Chunk {
 		ArrayList<Ent> r = new ArrayList<Ent>();
 		if (ents != null) {
 			for (Ent ent : ents) {
-				Vector3f pos = ent.position;
+				Vector3f pos = ent.getPos();
 				if (Math.floor(pos.x / 16) != x || Math.floor(pos.y / 16) != y || Math.floor(pos.z / 16) != z) {
 					r.add(ent);
 					r.remove(ent);
@@ -54,7 +54,7 @@ public class Chunk {
 		ArrayList<EntCol> r = new ArrayList<EntCol>();
 		if (cols != null) {
 			for (EntCol entCol : cols) {
-				Vector3f pos = entCol.position;
+				Vector3f pos = entCol.getPos();
 				if (Math.floor(pos.x / 16) != x || Math.floor(pos.y / 16) != y || Math.floor(pos.z / 16) != z) {
 					r.add(entCol);
 				}
@@ -68,11 +68,11 @@ public class Chunk {
 		String txt = "";
 		txt = x + ":" + y + ":" + z + "|\n";
 		for (Ent ent : ents) {
-			txt += ent.toString() + ";\n";
+			txt += ent.toString();
 		}
 		txt += "|\n";
 		for (EntCol col : cols) {
-			txt += col.toString() + ";\n";
+			txt += col.toString();
 		}
 		return txt;
 

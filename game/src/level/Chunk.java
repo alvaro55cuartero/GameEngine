@@ -5,24 +5,42 @@ import java.util.ArrayList;
 import org.joml.Vector3f;
 
 import colision.BoxColider;
-import objeto.Entity3D;
-import objeto.EntityPlane;
+import graphics.MasterRenderer;
+import objeto.entities.Entity3D;
+import objeto.entities.Entity3DPlane;
 
 public class Chunk {
 
 	private String text = "";
 	private String textEnt = "";
-	private String textCol = "";
+	private String textColX = "";
+	private String textColY = "";
+	private String textColGrab = "";
 	private int x;
 	private int y;
 	private int z;
 	private int size = 16;
 	private boolean active = false;
 	private ArrayList<Entity3D> entities = new ArrayList<Entity3D>();
-	private ArrayList<BoxColider> coliders = new ArrayList<BoxColider>();
+	private ArrayList<BoxColider> colidersX = new ArrayList<BoxColider>();
+	private ArrayList<BoxColider> colidersY = new ArrayList<BoxColider>();
+	private ArrayList<BoxColider> colidersGrab = new ArrayList<BoxColider>();
 
 	public Chunk(String text) {
 		load(text);
+	}
+
+	public void render() {
+		MasterRenderer.processEntities3D(getEntities());
+	}
+
+	public void renderDebug() {
+		for (int i = 0; i < getColidersX().size(); i++) {
+			getColidersX().get(i).render();
+		}
+		for (int i = 0; i < getColidersY().size(); i++) {
+			getColidersY().get(i).render();
+		}
 	}
 
 	public void load(String text) {
@@ -42,14 +60,20 @@ public class Chunk {
 	public void loadEnt(String txt) {
 		String[] ents = txt.split(";");
 		for (int i = 0; i < ents.length; i++) {
-			entities.add(new EntityPlane(ents[i]));
+			entities.add(new Entity3DPlane(ents[i]));
 		}
 	}
 
 	public void loadCol(String txt) {
 		String[] col = txt.split(";");
 		for (int i = 0; i < col.length; i++) {
-			coliders.add(new BoxColider(col[i]));
+			if (col[i].startsWith("X")) {
+				colidersX.add(new BoxColider(col[i]));
+			} else if (col[i].startsWith("Y")) {
+				colidersY.add(new BoxColider(col[i]));
+			} else if (col[i].startsWith("Grab")) {
+				colidersGrab.add(new BoxColider(col[i]));
+			}
 		}
 
 	}
@@ -73,7 +97,8 @@ public class Chunk {
 	public void clean() {
 		text = x + ":" + y + ":" + z + "|\n";
 		textEnt = "";
-		textCol = "";
+		textColX = "";
+		textColY = "";
 	}
 
 	public void addEntity(Entity3D entity) {
@@ -99,18 +124,32 @@ public class Chunk {
 		for (Entity3D entity : entities) {
 			textEnt += entity.toString();
 		}
-		for (BoxColider colider : coliders) {
-			textCol += colider.toString();
+		for (BoxColider colider : colidersX) {
+			textColX += colider.toString();
 		}
-		text += textEnt + "|\n" + textCol + "";
+		for (BoxColider colider : colidersX) {
+			textColY += colider.toString();
+		}
+		for (BoxColider colider : colidersGrab) {
+			textColGrab += colider.toString();
+		}
+		text += textEnt + "|\n" + textColX + textColY + textColGrab + "";
 	}
 
-	public ArrayList<BoxColider> getColiders() {
-		return coliders;
+	public ArrayList<BoxColider> getColidersX() {
+		return colidersX;
 	}
 
-	public void setColiders(ArrayList<BoxColider> coliders) {
-		this.coliders = coliders;
+	public void setColidersX(ArrayList<BoxColider> coliders) {
+		this.colidersX = coliders;
+	}
+
+	public ArrayList<BoxColider> getColidersY() {
+		return colidersY;
+	}
+
+	public void setColidersY(ArrayList<BoxColider> coliders) {
+		this.colidersY = coliders;
 	}
 
 	public ArrayList<Entity3D> getEntities() {
@@ -167,6 +206,14 @@ public class Chunk {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public ArrayList<BoxColider> getColidersGrab() {
+		return colidersGrab;
+	}
+
+	public void setColidersGrab(ArrayList<BoxColider> colidersGrab) {
+		this.colidersGrab = colidersGrab;
 	}
 
 }

@@ -3,7 +3,7 @@ package menuManager;
 import java.util.ArrayList;
 
 import graphics.MasterRenderer;
-import objeto.Entity;
+import objeto.entities.Entity;
 
 public class MasterMenu {
 

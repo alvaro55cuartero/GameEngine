@@ -7,10 +7,10 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
-import main.Camera;
 import main.Const;
-import objeto.Entity;
-import objeto.Entity3D;
+import objeto.Camera;
+import objeto.entities.Entity;
+import objeto.entities.Entity3D;
 import objeto.light.AmbientLight;
 import tools.FileUtils;
 

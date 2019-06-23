@@ -27,6 +27,11 @@ public class InputCursor implements GLFWCursorPosCallbackI {
 		return new Vector2f(((cursorPosition.x / Const.width) * 2) - 1, -(((cursorPosition.y / Const.height) * 2) - 1));
 	}
 
+	public static Vector2f coord01() {
+		return new Vector2f(cursorPosition.x / Const.width, -(cursorPosition.y / Const.height) + 1);
+
+	}
+
 	public static Vector2f coordInPix() {
 		return new Vector2f(cursorPosition.x, -cursorPosition.y + Const.height);
 	}

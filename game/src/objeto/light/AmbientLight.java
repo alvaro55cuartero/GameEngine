@@ -3,7 +3,7 @@ package objeto.light;
 import org.joml.Vector3f;
 
 import graphics.MasterRenderer;
-import objeto.EntityDebug;
+import objeto.entities.EntityDebug;
 
 public class AmbientLight {
 

@@ -4,10 +4,11 @@ import org.joml.AABBf;
 import org.joml.Vector3f;
 
 import graphics.MasterRenderer;
-import objeto.EntityDebug;
+import objeto.entities.EntityDebug;
 
 public class BoxColider {
 
+	private String type;
 	private AABBf colider;
 	private EntityDebug debug;
 
@@ -19,12 +20,13 @@ public class BoxColider {
 
 	public BoxColider(String txt) {
 		String[] arg = txt.split(":");
-		float x = Float.parseFloat(arg[0]);
-		float y = Float.parseFloat(arg[1]);
-		float z = Float.parseFloat(arg[2]);
-		float sx = Float.parseFloat(arg[3]);
-		float sy = Float.parseFloat(arg[4]);
-		float sz = Float.parseFloat(arg[5]);
+		type = arg[0];
+		float x = Float.parseFloat(arg[1]);
+		float y = Float.parseFloat(arg[2]);
+		float z = Float.parseFloat(arg[3]);
+		float sx = Float.parseFloat(arg[4]);
+		float sy = Float.parseFloat(arg[5]);
+		float sz = Float.parseFloat(arg[6]);
 		this.colider = new AABBf(x, y, z, x + sx, y + sy, z + sz);
 		debug = new EntityDebug(new Vector3f(x, y, z), 0, 0, 0, sx, sy, sz);
 	}
@@ -42,7 +44,7 @@ public class BoxColider {
 	}
 
 	public String toString() {
-		return colider.minX + ":" + colider.minY + ":" + colider.minZ + ":" + (colider.maxX - colider.minX) + ":"
-				+ (colider.maxY - colider.minY) + ":" + (colider.maxZ - colider.minZ) + ";\n";
+		return type + ":" + colider.minX + ":" + colider.minY + ":" + colider.minZ + ":" + (colider.maxX - colider.minX)
+				+ ":" + (colider.maxY - colider.minY) + ":" + (colider.maxZ - colider.minZ) + ";\n";
 	}
 }

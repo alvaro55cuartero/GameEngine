@@ -3,7 +3,7 @@ package tools;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import main.Camera;
+import objeto.Camera;
 
 public class Tools {
 

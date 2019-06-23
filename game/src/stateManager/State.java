@@ -1,28 +1,21 @@
 package stateManager;
 
-import main.Camera;
+import objeto.Camera;
 
-public class State {
+public abstract class State {
 
 	protected Camera camera = new Camera();
 
 	public State() {
-
 	}
 
-	public void tick(StateMachine stateMachine) {
+	public abstract void input();
 
-	}
+	public abstract void tick(StateMachine stateMachine);
 
-	public void render() {
+	public abstract void render();
 
-	}
+	public abstract void reset();
 
-	public void reset() {
-
-	}
-
-	public void cleanUp() {
-
-	}
+	public abstract void dispose();
 }

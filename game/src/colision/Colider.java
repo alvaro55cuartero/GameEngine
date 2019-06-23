@@ -2,7 +2,7 @@ package colision;
 
 import org.joml.Vector3f;
 
-import objeto.Entity;
+import objeto.entities.Entity;
 
 public class Colider extends Entity {
 

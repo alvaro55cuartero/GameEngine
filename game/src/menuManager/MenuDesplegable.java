@@ -3,8 +3,8 @@ package menuManager;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
-import objeto.EntityGUI;
-import objeto.EntityGUIBoton;
+import objeto.entities.EntityGUI;
+import objeto.entities.EntityGUIBoton;
 
 public class MenuDesplegable extends EntityGUI {
 

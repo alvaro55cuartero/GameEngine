@@ -3,16 +3,16 @@ package menuManager;
 import org.joml.Vector2f;
 
 import controls.InputCursor;
-import main.Camera;
 import main.Const;
-import objeto.EntityGUI;
-import objeto.EntityGUIBoton;
+import objeto.Camera;
+import objeto.entities.EntityGUI;
+import objeto.entities.EntityGUIBoton;
 
 public class MenuLateral extends EntityGUI {
 
-	EntityGUIBoton menuBoton1;
-	EntityGUIBoton menuBoton2;
-	EntityGUIBoton menuBoton3;
+	private EntityGUIBoton menuBoton1;
+	private EntityGUIBoton menuBoton2;
+	private EntityGUIBoton menuBoton3;
 
 	public MenuLateral(String ruta) {
 		super(9, new Vector2f(0, 0), 40, Const.height);
@@ -27,6 +27,7 @@ public class MenuLateral extends EntityGUI {
 		if (menuBoton1.intersect(InputCursor.coordInPix())) {
 			menuBoton1.tick();
 		}
+
 	}
 
 	public void render(Camera camera) {
