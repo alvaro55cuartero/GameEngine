@@ -17,6 +17,7 @@ import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL11;
 
 import controls.Input;
 import controls.InputClick;
@@ -33,6 +34,8 @@ public class Ventana {
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+		glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL11.GL_TRUE);
+		glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
 		window = glfwCreateWindow(Const.width, Const.height, Const.tiltle, 0, 0);
 
 		if (window == 0) {
