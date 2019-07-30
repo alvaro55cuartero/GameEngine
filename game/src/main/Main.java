@@ -1,7 +1,5 @@
 package main;
 
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
@@ -18,7 +16,7 @@ import stateManager.StateMachine;
 
 public class Main {
 
-	private Ventana ventana = new Ventana();
+	private Window ventana = new Window();
 	private StateMachine stateMachine;
 	private boolean bconsole = true;
 	private DebugConsole debugConsole;
@@ -38,7 +36,7 @@ public class Main {
 
 	private void init() {
 
-		ventana.createWindow();
+		ventana.create();
 		GL.createCapabilities();
 		MasterRenderer.init();
 
@@ -58,7 +56,7 @@ public class Main {
 	}
 
 	private void input() {
-		glfwPollEvents();
+
 		if (bconsole && Input.get(GLFW.GLFW_KEY_0)) {
 			debugConsole = new DebugConsole();
 			bconsole = false;
@@ -73,7 +71,7 @@ public class Main {
 	private void render() {
 		stateMachine.render();
 		TextMaster.render();
-		glfwSwapBuffers(this.ventana.window);
+
 	}
 
 	public void reset() {

@@ -13,7 +13,7 @@ public class EventDispatcher {
 	public boolean dispatch(Event event) {
 		if (this.event.getEventType() == event.getEventType()) {
 			event.handled =
-			return true;
+			return true; 
 		}
 		return false;
 	}

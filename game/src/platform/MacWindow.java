@@ -1,18 +1,22 @@
-package main;
+package platform;
 
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 
 import org.lwjgl.glfw.GLFW;
@@ -22,12 +26,20 @@ import org.lwjgl.opengl.GL11;
 import controls.Input;
 import controls.InputClick;
 import controls.InputCursor;
+import main.Const;
+import main.Window;
+import main.WindowProps;
 
-public class Ventana {
+public class MacWindow extends Window {
 
 	public long window;
 
-	public void createWindow() {
+	public MacWindow(WindowProps windowProps) {
+		super(windowProps);
+		init();
+	}
+
+	public void init() {
 		if (!glfwInit()) {
 			throw new IllegalStateException("GLFW no se pudo inicializar");
 		}
@@ -43,7 +55,8 @@ public class Ventana {
 		}
 
 		GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		glfwSetWindowPos(window, (videoMode.width() - Const.width) / 2, (videoMode.height() - Const.height) / 2);
+		glfwSetWindowPos(window, (videoMode.width() - this.getWindowProps().width) / 2,
+				(videoMode.height() - this.getWindowProps().height) / 2);
 		glfwShowWindow(window);
 		glfwSetKeyCallback(window, new Input());
 		glfwSetCursorPosCallback(window, new InputCursor());
@@ -53,12 +66,42 @@ public class Ventana {
 		// disableCursor();
 	}
 
+	public void shutdown() {
+		glfwDestroyWindow(window);
+	}
+
+	public Window create(WindowProps windowProps) {
+		return new MacWindow(windowProps);
+	}
+
 	public void disableCursor() {
 		glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
 	}
 
 	public void enableCursor() {
 		glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+	}
+
+	public void onUpdate() {
+		glfwPollEvents();
+		glfwSwapBuffers(window);
+	}
+
+	public void setEventCallback() {
+
+	}
+
+	public void setVsync(boolean enabled) {
+		if (enabled) {
+			glfwSwapInterval(1);
+		} else {
+			glfwSwapInterval(0);
+		}
+	}
+
+	public boolean isVsync() {
+
+		return false;
 	}
 
 }
