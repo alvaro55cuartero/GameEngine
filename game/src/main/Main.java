@@ -1,7 +1,6 @@
 package main;
 
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
@@ -12,11 +11,12 @@ import debug.DebugConsole;
 import fontRendering.TextMaster;
 import graphics.Loader;
 import graphics.MasterRenderer;
+import platform.MacWindow;
 import stateManager.StateMachine;
 
 public class Main {
 
-	private Window ventana = new Window();
+	private Window window = new MacWindow(new WindowProps("hola"));
 	private StateMachine stateMachine;
 	private boolean bconsole = true;
 	private DebugConsole debugConsole;
@@ -28,15 +28,13 @@ public class Main {
 
 	private void start() {
 		init();
-		while (!glfwWindowShouldClose(ventana.window)) {
+		while (true) {
 			loop();
 		}
-		dispose();
+		// dispose();
 	}
 
 	private void init() {
-
-		ventana.create();
 		GL.createCapabilities();
 		MasterRenderer.init();
 
@@ -48,6 +46,7 @@ public class Main {
 		if (debugConsole != null) {
 			debugConsole.grafica.add();
 		}
+		window.onUpdate();
 		input();
 		tick();
 		render();
@@ -62,6 +61,10 @@ public class Main {
 			bconsole = false;
 		}
 		stateMachine.input();
+	}
+
+	public void OnEvent(Event event) {
+
 	}
 
 	private void tick() {

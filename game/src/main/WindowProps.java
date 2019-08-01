@@ -14,7 +14,7 @@ public class WindowProps {
 		this.vSync = vSync;
 	}
 
-	public WindowProps(String title, boolean vSync) {
-		this(title, 1280, 720, vSync);
+	public WindowProps(String title) {
+		this(title, 1280, 720, true);
 	}
 }

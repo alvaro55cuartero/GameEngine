@@ -14,6 +14,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
@@ -58,11 +59,15 @@ public class MacWindow extends Window {
 		glfwSetWindowPos(window, (videoMode.width() - this.getWindowProps().width) / 2,
 				(videoMode.height() - this.getWindowProps().height) / 2);
 		glfwShowWindow(window);
+		glfwMakeContextCurrent(window);
+
+		// GLFW Callbacks.
+
+		glfwSetWindowSizeCallback();
 		glfwSetKeyCallback(window, new Input());
 		glfwSetCursorPosCallback(window, new InputCursor());
 		glfwSetMouseButtonCallback(window, new InputClick());
 
-		glfwMakeContextCurrent(window);
 		// disableCursor();
 	}
 
@@ -97,11 +102,11 @@ public class MacWindow extends Window {
 		} else {
 			glfwSwapInterval(0);
 		}
+		getWindowProps().vSync = enabled;
 	}
 
 	public boolean isVsync() {
-
-		return false;
+		return getWindowProps().vSync;
 	}
 
 }
