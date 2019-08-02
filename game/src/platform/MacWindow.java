@@ -13,6 +13,8 @@ import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowCloseCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
@@ -24,9 +26,16 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL11;
 
-import controls.Input;
-import controls.InputClick;
-import controls.InputCursor;
+import events.KeyEvent;
+import events.KeyPressedEvent;
+import events.KeyReleasedEvent;
+import events.MouseButtonEvent;
+import events.MouseButtonPressedEvent;
+import events.MouseButtonReleasedEvent;
+import events.MouseMovedEvent;
+import events.MouseScrolledEvent;
+import events.WindowCloseEvent;
+import events.WindowResizeEvent;
 import main.Const;
 import main.Window;
 import main.WindowProps;
@@ -63,11 +72,56 @@ public class MacWindow extends Window {
 
 		// GLFW Callbacks.
 
-		glfwSetWindowSizeCallback();
-		glfwSetKeyCallback(window, new Input());
-		glfwSetCursorPosCallback(window, new InputCursor());
-		glfwSetMouseButtonCallback(window, new InputClick());
+		glfwSetWindowSizeCallback(window, (window, width, height) -> {
+			WindowResizeEvent event = new WindowResizeEvent(width, width);
+		});
 
+		glfwSetWindowCloseCallback(window, (window) -> {
+			WindowCloseEvent event = new WindowCloseEvent();
+		});
+
+		// glfwSetKeyCallback(window, new Input());
+
+		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+			KeyEvent event;
+			switch (action) {
+			case GLFW.GLFW_RELEASE:
+				event = new KeyPressedEvent(key, 0);
+				break;
+			case GLFW.GLFW_PRESS:
+				event = new KeyReleasedEvent(key);
+				break;
+			case GLFW.GLFW_REPEAT:
+				event = new KeyPressedEvent(key, 1);
+				break;
+			}
+		});
+
+		// glfwSetMouseButtonCallback(window, new InputClick());
+
+		glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
+			MouseButtonEvent event;
+			switch (action) {
+			case GLFW.GLFW_PRESS:
+				event = new MouseButtonPressedEvent(button);
+				break;
+			case GLFW.GLFW_RELEASE:
+				event = new MouseButtonReleasedEvent(button);
+				break;
+			case GLFW.GLFW_REPEAT:
+				break;
+			}
+		});
+
+		glfwSetScrollCallback(window, (window, xOff, yOff) -> {
+			MouseScrolledEvent event = new MouseScrolledEvent((float) xOff, (float) yOff);
+		});
+
+		// glfwSetCursorPosCallback(window, new InputCursor());
+
+		glfwSetCursorPosCallback(window, (window, xPos, yPos) -> {
+			MouseMovedEvent event = new MouseMovedEvent((float) xPos, (float) yPos);
+		});
 		// disableCursor();
 	}
 

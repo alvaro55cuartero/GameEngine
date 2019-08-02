@@ -1,2 +1,8 @@
 /main/
 /platform/
+/audio/
+/debug/
+/events/
+/graphics/
+/stateManager/
+/test/
