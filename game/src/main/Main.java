@@ -8,6 +8,8 @@ import org.lwjgl.opengl.GL;
 import controls.Input;
 import controls.InputCursor;
 import debug.DebugConsole;
+import events.Event;
+import events.EventDispatcher;
 import fontRendering.TextMaster;
 import graphics.Loader;
 import graphics.MasterRenderer;
@@ -21,6 +23,8 @@ public class Main {
 	private boolean bconsole = true;
 	private DebugConsole debugConsole;
 
+	public boolean running;
+
 	public static void main(String[] args) {
 		Main main = new Main();
 		main.start();
@@ -28,7 +32,7 @@ public class Main {
 
 	private void start() {
 		init();
-		while (true) {
+		while (running) {
 			loop();
 		}
 		// dispose();
@@ -64,7 +68,8 @@ public class Main {
 	}
 
 	public void OnEvent(Event event) {
-
+		EventDispatcher dispatcher = new EventDispatcher(event);
+		dispatcher.dispatch(event);
 	}
 
 	private void tick() {
