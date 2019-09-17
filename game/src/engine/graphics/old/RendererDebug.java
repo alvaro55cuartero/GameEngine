@@ -11,8 +11,8 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import engine.models.RawModel;
-import engine.models.RawModelCuboLine;
+import engine.models.old.RawModel;
+import engine.models.old.RawModelCuboLine;
 import engine.objeto.Camera;
 import engine.objeto.entities.Entity;
 import engine.platform.opengl.old.OpenGLShader;

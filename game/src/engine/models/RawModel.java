@@ -1,8 +1,19 @@
 package engine.models;
 
-import engine.graphics.old.Loader;
+import java.util.ArrayList;
+
+import engine.graphics.VertexArray;
+import engine.graphics.buffers.Buffer.ShaderDataType;
+import engine.graphics.buffers.BufferElement;
+import engine.graphics.buffers.BufferLayout;
+import engine.graphics.buffers.IndexBuffer;
+import engine.graphics.buffers.VertexBuffer;
 
 public class RawModel {
+
+	public VertexArray vertexArray;
+
+	public IndexBuffer index;
 
 	protected int id;
 	protected int count;
@@ -12,16 +23,33 @@ public class RawModel {
 		this.count = count;
 	}
 
-	public RawModel(float[] positions, int[] indices, float[] textureCoords) {
-		RawModel model = Loader.loadToVao(positions, indices, textureCoords);
-		this.id = model.id;
-		this.count = model.count;
+	public RawModel(int[] indices, float[] positions, float[] textureCoords) {
+		vertexArray = VertexArray.create();
+
+		VertexBuffer position = VertexBuffer.create(positions);
+		ArrayList<BufferElement> a = new ArrayList<BufferElement>();
+		a.add(new BufferElement(ShaderDataType.FLOAT3, "position"));
+		position.setLayout(new BufferLayout(a));
+		vertexArray.addVertexBuffer(position);
+
+		VertexBuffer textCoord = VertexBuffer.create(textureCoords);
+		ArrayList<BufferElement> b = new ArrayList<BufferElement>();
+		b.add(new BufferElement(ShaderDataType.FLOAT2, "textCoord"));
+		textCoord.setLayout(new BufferLayout(b));
+		vertexArray.addVertexBuffer(textCoord);
+
+		index = IndexBuffer.create(indices);
+		vertexArray.setIndexBuffer(index);
+
 	}
 
 	public RawModel(int[] indices, float[] positions, float[] textureCoords, float[] normals) {
-		RawModel model = Loader.loadToVao(indices, positions, textureCoords, normals);
-		this.id = model.id;
-		this.count = model.count;
+		this(indices, positions, textureCoords);
+		VertexBuffer normal = VertexBuffer.create(normals);
+		ArrayList<BufferElement> a = new ArrayList<BufferElement>();
+		a.add(new BufferElement(ShaderDataType.FLOAT3, "normals"));
+		normal.setLayout(new BufferLayout(a));
+		vertexArray.addVertexBuffer(normal);
 	}
 
 	public int getId() {

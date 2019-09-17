@@ -1,4 +1,4 @@
-package engine.models;
+package engine.models.old;
 
 public class RawModelCuboLine extends RawModel {
 

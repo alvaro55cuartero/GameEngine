@@ -1,4 +1,4 @@
-package engine.models;
+package engine.models.old;
 
 public class CuboRawModel extends RawModel {
 
@@ -29,7 +29,7 @@ public class CuboRawModel extends RawModel {
 	};
 
 	public CuboRawModel() {
-		super(indices, vertices, textureCoords);
+		super(vertices, indices, textureCoords);
 	}
 
 }

@@ -14,7 +14,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
-import engine.models.RawModel;
+import engine.models.old.RawModel;
 
 public class Loader {
 
