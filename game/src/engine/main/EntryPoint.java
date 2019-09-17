@@ -1,15 +1,12 @@
 package engine.main;
 
-import game.App;
+import sandbox.GameApp;
 
 public class EntryPoint {
 
 	public static void main(String[] args) {
-		// GameApp app = new GameApp();
-		App app = new App();
-
+		GameApp app = new GameApp();
 		app.run();
-
 	}
 
 }

@@ -29,7 +29,7 @@ public class CuboRawModel extends RawModel {
 	};
 
 	public CuboRawModel() {
-		super(indices, vertices, textureCoords);
+		super(vertices, indices, textureCoords);
 	}
 
 }

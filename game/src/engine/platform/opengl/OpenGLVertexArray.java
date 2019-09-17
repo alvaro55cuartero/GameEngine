@@ -50,6 +50,10 @@ public class OpenGLVertexArray extends VertexArray {
 		vertexBuffers.add(vertexBuffer);
 	}
 
+	public void setIndexBuffer() {
+
+	}
+
 	public void dispose() {
 		GL30.glDeleteVertexArrays(rendererID);
 	}
