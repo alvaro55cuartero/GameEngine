@@ -2,11 +2,11 @@ package engine.graphics;
 
 import org.joml.Vector4f;
 
-import engine.platform.opengl.OpenGLRendererAPI;
+import engine.platform.openGL.OpenGLRendererApi;
 
 public class RenderCommand {
 
-	private static RendererAPI rendererAPI = new OpenGLRendererAPI();
+	private static RendererApi rendererAPI = new OpenGLRendererApi();
 
 	public static void init() {
 		rendererAPI.init();

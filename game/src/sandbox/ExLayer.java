@@ -1,6 +1,5 @@
 package sandbox;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import org.joml.Matrix4f;
@@ -8,22 +7,22 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import engine.controls.Input;
-import engine.controls.KeyMap;
-import engine.events.Event;
+import engine.controls.KeyCode;
 import engine.graphics.RenderCommand;
 import engine.graphics.Renderer;
 import engine.graphics.VertexArray;
 import engine.graphics.buffers.Buffer.ShaderDataType;
-import engine.graphics.texture.Texture2D;
 import engine.graphics.buffers.BufferElement;
 import engine.graphics.buffers.BufferLayout;
 import engine.graphics.buffers.IndexBuffer;
 import engine.graphics.buffers.VertexBuffer;
-import engine.layer.Layer;
+import engine.graphics.shaders.Shader;
+import engine.graphics.textures.Texture2D;
 import engine.main.Timestep;
-import engine.objeto.OrthographicCamera;
-import engine.platform.opengl.OpenGLShader;
-import engine.shader.Shader;
+import engine.main.events.Event;
+import engine.main.layer.Layer;
+import engine.objects.camera.OrthographicCamera;
+import engine.platform.openGL.OpenGLShader;
 import engine.tools.FileUtils;
 
 public class ExLayer extends Layer {
@@ -69,44 +68,36 @@ public class ExLayer extends Layer {
 		float squareVertices[] = { 0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, -0.5f, -0.5f, 0.0f,
 				0.0f, 0.0f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f };
 
-		VertexBuffer squareVB;
-		squareVB = VertexBuffer.create(squareVertices);
+		VertexBuffer squareVB = VertexBuffer.create(squareVertices);
 		ArrayList<BufferElement> b = new ArrayList<BufferElement>();
-		b.add(new BufferElement(ShaderDataType.FLOAT3, "a_Position"));
-		b.add(new BufferElement(ShaderDataType.FLOAT2, "a_TexCoord"));
+		b.add(new BufferElement("a_Position", ShaderDataType.FLOAT3));
+		b.add(new BufferElement("a_TexCoord", ShaderDataType.FLOAT2));
 		BufferLayout layout2 = new BufferLayout(b);
 
 		squareVB.setLayout(layout2);
 		squareVA.addVertexBuffer(squareVB);
 
 		int squareIndices[] = { 0, 1, 2, 2, 3, 0 };
-		IndexBuffer squareIB;
-		squareIB = IndexBuffer.create(squareIndices);
+		IndexBuffer squareIB = IndexBuffer.create(squareIndices);
 		squareVA.setIndexBuffer(squareIB);
 
-		String vertexSrc = FileUtils.readTxt(new File("src/sandbox/shaders/vertex.glsl"));
-
-		String fragmentSrc = FileUtils.readTxt(new File("src/sandbox/shaders/fragment.glsl"));
-
+		String vertexSrc = FileUtils.readTxt("src/sandbox/shaders/vertex.glsl");
+		String fragmentSrc = FileUtils.readTxt("src/sandbox/shaders/fragment.glsl");
 		shader = Shader.create(vertexSrc, fragmentSrc);
 
-		String flatColorShaderVertexSrc = FileUtils.readTxt(new File("src/sandbox/shaders/flatcolorvertex.glsl"));
-
-		String flatColorShaderFragmentSrc = FileUtils.readTxt(new File("src/sandbox/shaders/flatcolorfragment.glsl"));
-
+		String flatColorShaderVertexSrc = FileUtils.readTxt("src/sandbox/shaders/flatcolorvertex.glsl");
+		String flatColorShaderFragmentSrc = FileUtils.readTxt("src/sandbox/shaders/flatcolorfragment.glsl");
 		flatColorShader = Shader.create(flatColorShaderVertexSrc, flatColorShaderFragmentSrc);
 
-		String textureShaderVertexSrc = FileUtils.readTxt(new File("src/sandbox/shaders/texturevertex.glsl"));
-
-		String textureShaderFragmentSrc = FileUtils.readTxt(new File("src/sandbox/shaders/texturefragment.glsl"));
-
+		String textureShaderVertexSrc = FileUtils.readTxt("src/sandbox/shaders/texturevertex.glsl");
+		String textureShaderFragmentSrc = FileUtils.readTxt("src/sandbox/shaders/texturefragment.glsl");
 		textureShader = Shader.create(textureShaderVertexSrc, textureShaderFragmentSrc);
 
 		texture = Texture2D.create("res/png/balcon.png");
 		chernoLogoTexture = Texture2D.create("res/png/balcon.png");
 
 		textureShader.bind();
-		((OpenGLShader) textureShader).uploadUniformInt("u_Texture", 0);
+		textureShader.setInt("u_Texture", 0);
 
 	}
 
@@ -120,30 +111,30 @@ public class ExLayer extends Layer {
 
 	public void onUpdate(Timestep timestep) {
 
-		if (Input.isKeyPressed(KeyMap.HZ_KEY_LEFT)) {
+		if (Input.isKeyPressed(KeyCode.PRO_KEY_LEFT)) {
 			camera.getPosition().x -= cameraMoveSpeed * timestep.getSeconds();
-		} else if (Input.isKeyPressed(KeyMap.HZ_KEY_RIGHT)) {
+		} else if (Input.isKeyPressed(KeyCode.PRO_KEY_RIGHT)) {
 			camera.getPosition().x += cameraMoveSpeed * timestep.getSeconds();
 		}
 
-		if (Input.isKeyPressed(KeyMap.HZ_KEY_UP)) {
+		if (Input.isKeyPressed(KeyCode.PRO_KEY_UP)) {
 			camera.getPosition().y += cameraMoveSpeed * timestep.getSeconds();
-		} else if (Input.isKeyPressed(KeyMap.HZ_KEY_DOWN)) {
+		} else if (Input.isKeyPressed(KeyCode.PRO_KEY_DOWN)) {
 			camera.getPosition().y -= cameraMoveSpeed * timestep.getSeconds();
 		}
 
-		if (Input.isKeyPressed(KeyMap.HZ_KEY_A)) {
+		if (Input.isKeyPressed(KeyCode.PRO_KEY_A)) {
 			cameraRotation += cameraRotationSpeed * timestep.getSeconds();
 		}
 
-		if (Input.isKeyPressed(KeyMap.HZ_KEY_D)) {
+		if (Input.isKeyPressed(KeyCode.PRO_KEY_D)) {
 			cameraRotation -= cameraRotationSpeed * timestep.getSeconds();
 		}
 
 		RenderCommand.setClearColor(new Vector4f(0.1f, 0.1f, 0.1f, 1));
 		RenderCommand.clear();
 
-		camera.setRotation(cameraRotation);
+		// camera.setRotation(cameraRotation);
 
 		Renderer.beginScene(camera);
 

@@ -3,10 +3,10 @@ package engine.graphics.buffers;
 public class Buffer {
 
 	public enum ShaderDataType {
-		NONE, FLOAT, FLOAT2, FLOAT3, FLOAT4, MAT3, MAT4, INT, INT2, INT3, INT4, BOOL
+		NONE, FLOAT, FLOAT2, FLOAT3, FLOAT4, INT, INT2, INT3, INT4, MAT3, MAT4, BOOL
 	};
 
-	static int ShaderDataTypeSize(ShaderDataType type) {
+	public static int ShaderDataTypeSize(ShaderDataType type) {
 		switch (type) {
 		case FLOAT:
 			return 4;
@@ -35,7 +35,39 @@ public class Buffer {
 		default:
 			break;
 		}
+		// HZ_CORE_ASSERT(false, "Unknown ShaderDataType!");
+		return 0;
+	}
 
+	public static int getComponentCount(ShaderDataType type) {
+		switch (type) {
+		case FLOAT:
+			return 1;
+		case FLOAT2:
+			return 2;
+		case FLOAT3:
+			return 3;
+		case FLOAT4:
+			return 4;
+		case MAT3:
+			return 3 * 3;
+		case MAT4:
+			return 4 * 4;
+		case INT:
+			return 1;
+		case INT2:
+			return 2;
+		case INT3:
+			return 3;
+		case INT4:
+			return 4;
+		case BOOL:
+			return 1;
+		case NONE:
+			break;
+		default:
+			break;
+		}
 		// HZ_CORE_ASSERT(false, "Unknown ShaderDataType!");
 		return 0;
 	}

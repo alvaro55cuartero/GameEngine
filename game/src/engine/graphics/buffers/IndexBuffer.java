@@ -1,7 +1,7 @@
 package engine.graphics.buffers;
 
 import engine.graphics.Renderer;
-import engine.platform.opengl.OpenGLIndexBuffer;
+import engine.platform.openGL.OpenGLIndexBuffer;
 
 public abstract class IndexBuffer {
 
@@ -12,15 +12,18 @@ public abstract class IndexBuffer {
 	public abstract int getCount();
 
 	public static IndexBuffer create(int[] indices) {
-		switch (Renderer.getAPI()) {
+		switch (Renderer.getApi()) {
 		case NONE:
 			// HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			return null;
 		case OPENGL:
 			return new OpenGLIndexBuffer(indices);
+		default:
+			break;
 		}
 
 		// HZ_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return null;
+
 	}
 }

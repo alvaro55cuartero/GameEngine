@@ -4,7 +4,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
-import engine.controls.old.Input;
+import engine.old.controls.old.Input;
 
 public class Test {
 

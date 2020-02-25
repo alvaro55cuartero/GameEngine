@@ -11,6 +11,6 @@ out vec3 v_Position;
 void main() {
 
 	v_Position = a_Position;
-	gl_Position = projectionMatrix *  viewMatrix  * transformationMatrix * vec4(position, 1.0);
+	gl_Position = projectionMatrix *  viewMatrix  * transformationMatrix * vec4(a_Position, 1.0);
 
 }

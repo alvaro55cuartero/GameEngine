@@ -1,7 +1,6 @@
 package engine.main;
 
 public class Timestep {
-
 	private float time;
 
 	public Timestep(float time) {
@@ -15,5 +14,4 @@ public class Timestep {
 	public float getMilliseconds() {
 		return time * 1000.0f;
 	}
-
 }

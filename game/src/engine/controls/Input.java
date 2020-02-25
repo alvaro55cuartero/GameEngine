@@ -2,14 +2,27 @@ package engine.controls;
 
 import org.joml.Vector2f;
 
-import engine.platform.linux.LinuxInput;
+import engine.main.Api;
+import engine.platform.windows.WindowsInput;
 
 public abstract class Input {
-	private static Input instance = new LinuxInput();
-	/*
-	 * protected: Input() = default; public: Input(const Input&) = delete; Input&
-	 * operator=(const Input&) = delete;
-	 */
+
+	public static Input instance = create();
+
+	public static Input create() {
+		switch (Api.instance.os) {
+		case WINDOWS:
+			return new WindowsInput();
+		case LINUX:
+			return null;
+		case MAC:
+			return null;
+		case NONE:
+			return null;
+		default:
+			return null;
+		}
+	}
 
 	public static boolean isKeyPressed(int keycode) {
 		return instance.isKeyPressedImpl(keycode);
@@ -40,5 +53,4 @@ public abstract class Input {
 	protected abstract float getMouseXImpl();
 
 	protected abstract float getMouseYImpl();
-
 }

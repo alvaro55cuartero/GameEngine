@@ -1,0 +1,23 @@
+Application:
+	
+	- Window.
+	- LayerStack.
+	
+Window:
+	
+
+
+WindowsWindow: Extends Window
+
+	- OpenGLContext;
+	
+
+
+OpenGLContext: Extends GraphicsContext
+
+
+GraphicsContext:
+
+
+	
+	

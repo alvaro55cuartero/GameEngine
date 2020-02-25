@@ -4,12 +4,9 @@ import java.util.ArrayList;
 
 import engine.graphics.buffers.IndexBuffer;
 import engine.graphics.buffers.VertexBuffer;
-import engine.platform.opengl.OpenGLVertexArray;
+import engine.platform.openGL.OpenGLVertexArray;
 
 public abstract class VertexArray {
-
-	public VertexArray() {
-	}
 
 	public abstract void bind();
 
@@ -24,15 +21,18 @@ public abstract class VertexArray {
 	public abstract IndexBuffer getIndexBuffer();
 
 	public static VertexArray create() {
-		switch (Renderer.getAPI()) {
+		switch (Renderer.getApi()) {
 		case NONE:
 			// HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported!");
 			System.out.println("VertexArray class");
 			return null;
 		case OPENGL:
 			return new OpenGLVertexArray();
+		default:
+			break;
 		}
 
 		return null;
 	}
+
 }
